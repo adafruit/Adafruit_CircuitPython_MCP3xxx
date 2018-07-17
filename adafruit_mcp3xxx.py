@@ -25,25 +25,21 @@
 
 CircuitPython Library for MCP3xxx ADCs with SPI
 
-* Author(s): ladyada
+* Author(s): ladyada, Brent Rubell
 
 Implementation Notes
 --------------------
 
 **Hardware:**
 
-.. todo:: Add links to any specific hardware product page(s), or category page(s). Use unordered list & hyperlink rST
-   inline format: "* `Link Text <url>`_"
+* Adafruit `MCP3008 8-Channel 10-Bit ADC with SPI
+  <https://www.adafruit.com/product/856>`_ (Product ID: 856)
 
 **Software and Dependencies:**
 
 * Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
-  
-.. todo:: Uncomment or remove the Bus Device and/or the Register library dependencies based on the library's use of either.
-
-# * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
-# * Adafruit's Register library: https://github.com/adafruit/Adafruit_CircuitPython_Register
+* Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 """
 
 # imports
@@ -61,7 +57,7 @@ class MCP3008:
     self.out_buf = bytearray(3)
     self.in_buf = bytearray(3)
 
-  def _read_channel(self, channel=0):
+  def _read_adc(self, channel=0):
     assert 0 <= channel <= 7, 'Channel must be a value within 0-7!'
     command = (0x01 << 7)
     command |= (1 << 6)
@@ -70,19 +66,23 @@ class MCP3008:
     self.out_buf[1] = 0x00
     self.out_buf[2] = 0x00
     with self.spi_device as spi:
-      spi.write_readinto(self.out_buf, self.in_buf, out_start=0, out_end=len(self.out_buf), in_start=0, in_end=len(self.in_buf))
+      spi.write_readinto(self.out_buf, self.in_buf, out_start=0, 
+        out_end=len(self.out_buf), in_start=0, in_end=len(self.in_buf))
     result = (self.in_buf[0] & 0x01) << 9
     result |= (self.in_buf[1] & 0xFF) << 1
     result |= (self.in_buf[2] & 0x80) >> 7
     result &= 0x3FF
     return result 
 
+  #todo: implement differential readings
+  #todo: make adc volts/values properties, mcp.volts[0]
+
   def adc_volts(self, channel, voltage=3.3):
-    """single-ended adc voltage read."""
-    adc_value = self._read_channel(channel)
+    """adc voltage read."""
+    adc_value = self._read_adc(channel)
     return (adc_value * voltage) / 1023
 
 
   def adc_value(self, channel):
     """single-ended raw ADC Value (0-1023)."""
-    return self._read_channel(channel)
+    return self._read_adc(channel)
