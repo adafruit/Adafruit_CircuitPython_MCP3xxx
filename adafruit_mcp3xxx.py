@@ -21,9 +21,9 @@
 # THE SOFTWARE.
 """
 `adafruit_MCP3xxx`
-====================================================
+================================================
 
-.. todo:: Describe what the module does
+CircuitPython Library for MCP3xxx ADCs with SPI
 
 * Author(s): ladyada
 
@@ -47,6 +47,15 @@ Implementation Notes
 """
 
 # imports
+import busio
+import digitalio
+import board
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
+
+
+class MCP3008:
+  """
+  Driver for the MCP3008 8-channel, 10b ADC
+  """
