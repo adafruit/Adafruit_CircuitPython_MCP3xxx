@@ -10,8 +10,18 @@ cs = digitalio.DigitalInOut(board.D5)
 # create the mcp3008 object
 mcp = adafruit_mcp3xxx.MCP3008(spi, cs)
 
-# read mcp, ch0 raw value
-print(mcp.adc_value(0))
+"""
+Single-Ended Read
+"""
+# channel 0 raw value
+print('CH0 Value: ', mcp.read_adc(0))
+# channel 0 voltage value 
+print('CH0 Voltage:', mcp.read_volts(0), 'volts')
 
-# read mcp, ch0 voltage value 
-print(mcp.adc_volts(0))
+"""
+Differential Read
+"""
+# differential 0 raw value
+print('differential 0 (CH0-CH1) value:', mcp.read_adc_difference(0))
+# differential 0 differential voltage
+print('differential 0 (CH0-CH1) value:', mcp.read_volts_difference(0))
