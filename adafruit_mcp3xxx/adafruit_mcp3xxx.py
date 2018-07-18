@@ -79,6 +79,10 @@ class MCP3xxx(object):
     self.spi_device = SPIDevice(spi, cs)
     self.out_buf = bytearray(3)
     self.in_buf = bytearray(3)
+    self._channels = [ADC_Channel(self, 0), ADC_Channel(self, 1),
+    ADC_Channel(self, 2), ADC_Channel(self, 3),
+    ADC_Channel(self, 4), ADC_Channel(self, 5),
+    ADC_Channel(self, 6), ADC_Channel(self, 7)]
 
   def _read_channel(self, channel):
     raise NotImplementedError('Subclass must implement _read_channel function!')
