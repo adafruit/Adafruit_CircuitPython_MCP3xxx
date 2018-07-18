@@ -47,27 +47,34 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
 # imports
 from micropython import const
+
+import digitalio
 from adafruit_bus_device.spi_device import SPIDevice
 
 # configuration values
 MCP3008_OUT_BUFF      = const(0x00)
 MCP3008_DIFF_READ     = const(0b10)
 MCP3008_SINGLE_READ   = const(0b11)
+CS_PIN                = 'D5'
 
-class ADC_Channel(object):
-  """Provides per channel access to ADC readings."""
+# adc = MCP3008.AnalogInput(PIN)
 
+class AnalogInput(object):
+  """Mock AnalogInput for ADC readings."""
   def __init__(self, adc, channel):
     self._adc = adc
     self._channel = channel
   
+  def deinit(self):
+    pass
+
   @property
   def value(self):
     """ADC raw reading."""
-    return self._adc._read_channel(self._channel)
+    return self._adc._read_pin(self._channel)
   
   @property
-  def volts(self, ):
+  def volts(self):
     """ADC reading in volts."""
     return self._adc._read_channel_volts(self._channel)
 
@@ -75,20 +82,24 @@ class ADC_Channel(object):
 class MCP3xxx(object):
   """Base functionality for MCP3xxx analog to digital converters."""
 
-  def __init__(self, spi, cs):
+  def __init__(self, pin, spi, cs):
     self.spi_device = SPIDevice(spi, cs)
+    self.pin = pin # channel pin
     self.out_buf = bytearray(3)
     self.in_buf = bytearray(3)
-    self._channels = [ADC_Channel(self, 0), ADC_Channel(self, 1),
-    ADC_Channel(self, 2), ADC_Channel(self, 3),
-    ADC_Channel(self, 4), ADC_Channel(self, 5),
-    ADC_Channel(self, 6), ADC_Channel(self, 7)]
 
-  def _read_channel(self, channel):
+    # remove as we make the calls more abstract
+    
+    self._pins = [AnalogInput(self, 0), AnalogInput(self, 1),
+    AnalogInput(self, 2), AnalogInput(self, 3),
+    AnalogInput(self, 4), AnalogInput(self, 5),
+    AnalogInput(self, 6), AnalogInput(self, 7)]
+
+  def _read_pin(self, pin):
       """Subclasses should override this function to return a value for the
-      requested channels as a signed integer value.
+      requested pins as a signed integer value.
       """
-      raise NotImplementedError('Subclass must implement _read_channel function!')
+      raise NotImplementedError('Subclass must implement _read_pin function!')
 
   def _read_channel_volts(self, channel):
       """Subclasses should override this function to return a value for the
@@ -96,11 +107,11 @@ class MCP3xxx(object):
       """
       raise NotImplementedError('Subclass must implement _read_channel_volts function!')
 
-  def _read(self, channel, is_differential=False):
-    """ SPI transfer for ADC reads.
+  def _read(self, pin, is_differential=False):
+    """SPI transfer for ADC reads.
 
     params:
-      int channel: individual channel or differential.
+      int pin: individual pin or differential.
       bool is_differential: single-ended or differential read.
     """
     # build adc read command
@@ -108,7 +119,7 @@ class MCP3xxx(object):
       command = MCP3008_DIFF_READ << 6
     else:
       command = MCP3008_SINGLE_READ << 6
-    command |= ((channel & 0x07) << 3)
+    command |= ((pin & 0x07) << 3)
     self.out_buf[0] = command
     self.out_buf[1] = MCP3008_OUT_BUFF
     self.out_buf[2] = MCP3008_OUT_BUFF
