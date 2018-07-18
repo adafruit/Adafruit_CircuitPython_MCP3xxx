@@ -61,22 +61,20 @@ CS_PIN                = 'D5'
 
 class AnalogInput(object):
   """Mock AnalogInput for ADC readings."""
-  def __init__(self, adc, channel):
+  def __init__(self, adc, pin):
     self._adc = adc
-    self._channel = channel
-  
-  def deinit(self):
-    pass
+    self._pin = pin
+
 
   @property
   def value(self):
     """ADC raw reading."""
-    return self._adc._read_pin(self._channel)
+    return self._adc._read_pin(self._pin)
   
   @property
   def volts(self):
     """ADC reading in volts."""
-    return self._adc._read_channel_volts(self._channel)
+    return self._adc._read_channel_volts(self._pin)
 
 
 class MCP3xxx(object):
@@ -84,16 +82,11 @@ class MCP3xxx(object):
 
   def __init__(self, pin, spi, cs):
     self.spi_device = SPIDevice(spi, cs)
-    self.pin = pin # channel pin
     self.out_buf = bytearray(3)
     self.in_buf = bytearray(3)
+    self.analog = AnalogInput(self, pin)
+    #print(self.analog.value)
 
-    # remove as we make the calls more abstract
-    
-    self._pins = [AnalogInput(self, 0), AnalogInput(self, 1),
-    AnalogInput(self, 2), AnalogInput(self, 3),
-    AnalogInput(self, 4), AnalogInput(self, 5),
-    AnalogInput(self, 6), AnalogInput(self, 7)]
 
   def _read_pin(self, pin):
       """Subclasses should override this function to return a value for the
