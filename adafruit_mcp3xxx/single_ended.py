@@ -32,7 +32,6 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
 from .adafruit_mcp3xxx import MCP3xxx
-from .adafruit_mcp3xxx import MCP3008_SINGLE_READ, MCP3008_DIFF_READ
 
 class MCP3xxx_SingleEnded(MCP3xxx):
     """Base functionality for MCP3xxx analog to digital converters operating
@@ -40,7 +39,7 @@ class MCP3xxx_SingleEnded(MCP3xxx):
 
     def __getitem__(self, key):
         return self._channels[key]
-    
+
     def read_adc(self, channel):
         """Read a single ADC channel and return the value as an integer.
         Channel must be a value be within 0-7.
@@ -59,7 +58,7 @@ class MCP3xxx_SingleEnded(MCP3xxx):
 class MCP3008(MCP3xxx_SingleEnded):
     """MCP3008 10-bit single ended analog to digital converter instance"""
     def __init__(self, *args, **kwargs):
-        super(MCP3008, self).__init__(*args, **kwargs)
+        super(MCP3008, self).__init__(self, *args, **kwargs)
     
     def _read_channel(self, channel):
         return self.read_adc(channel)

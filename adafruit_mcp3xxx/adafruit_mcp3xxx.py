@@ -62,14 +62,14 @@ class ADC_Channel(object):
     self._channel = channel
   
   @property
-  def value(self, ):
+  def value(self):
     """ADC raw reading."""
-    return self._adc_read_channel(self._channel)
+    return self._adc._read_channel(self._channel)
   
   @property
   def volts(self, ):
     """ADC reading in volts."""
-    return self._adc_read_channel_volts(self._channel)
+    return self._adc._read_channel_volts(self._channel)
 
 
 class MCP3xxx(object):
@@ -85,10 +85,16 @@ class MCP3xxx(object):
     ADC_Channel(self, 6), ADC_Channel(self, 7)]
 
   def _read_channel(self, channel):
-    raise NotImplementedError('Subclass must implement _read_channel function!')
-  
+      """Subclasses should override this function to return a value for the
+      requested channels as a signed integer value.
+      """
+      raise NotImplementedError('Subclass must implement _read_channel function!')
+
   def _read_channel_volts(self, channel):
-    raise NotImplementedError('Subclass must implement _read_channel_volts function!')
+      """Subclasses should override this function to return a value for the
+      requested channels as a float value.
+      """
+      raise NotImplementedError('Subclass must implement _read_channel_volts function!')
 
   def _read(self, channel, is_differential=False):
     """ SPI transfer for ADC reads.
@@ -116,4 +122,3 @@ class MCP3xxx(object):
     result |= (self.in_buf[2] & 0x80) >> 7
     result &= 0x3FF
     return result
-
