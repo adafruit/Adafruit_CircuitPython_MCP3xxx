@@ -42,22 +42,49 @@ Implementation Notes
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 """
 
-# imports
-from adafruit_bus_device.spi_device import SPIDevice
-
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
+# imports
+from micropython import const
+from adafruit_bus_device.spi_device import SPIDevice
 
-class MCP3008:
-  """
-  Driver for the MCP3008 8-channel, 10bit ADC
-  """
+# configuration values
+MCP3008_OUT_BUFF      = const(0x00)
+MCP3008_DIFF_READ     = const(0b10)
+MCP3008_SINGLE_READ   = const(0b11)
+
+class ADC_Channel(object):
+  """Provides per channel access to ADC readings."""
+
+  def __init__(self, adc, channel):
+    self._adc = adc
+    self._channel = channel
+  
+  @property
+  def value(self, ):
+    """ADC raw reading."""
+    return self._adc_read_channel(self._channel)
+  
+  @property
+  def volts(self, ):
+    """ADC reading in volts."""
+    return self._adc_read_channel_volts(self._channel)
+
+
+class MCP3xxx(object):
+  """Base functionality for MCP3xxx analog to digital converters."""
+
   def __init__(self, spi, cs):
     self.spi_device = SPIDevice(spi, cs)
     self.out_buf = bytearray(3)
     self.in_buf = bytearray(3)
 
+  def _read_channel(self, channel):
+    raise NotImplementedError('Subclass must implement _read_channel function!')
+  
+  def _read_channel_volts(self, channel):
+    raise NotImplementedError('Subclass must implement _read_channel_volts function!')
 
   def _read(self, channel, is_differential=False):
     """ SPI transfer for ADC reads.
@@ -68,13 +95,13 @@ class MCP3008:
     """
     # build adc read command
     if is_differential:
-      command = 0b10 << 6
+      command = MCP3008_DIFF_READ << 6
     else:
-      command = 0b11 << 6
+      command = MCP3008_SINGLE_READ << 6
     command |= ((channel & 0x07) << 3)
     self.out_buf[0] = command
-    self.out_buf[1] = 0x00
-    self.out_buf[2] = 0x00
+    self.out_buf[1] = MCP3008_OUT_BUFF
+    self.out_buf[2] = MCP3008_OUT_BUFF
     # spi transfer
     with self.spi_device as spi:
       spi.write_readinto(self.out_buf, self.in_buf, out_start=0, 
@@ -84,52 +111,5 @@ class MCP3008:
     result |= (self.in_buf[1] & 0xFF) << 1
     result |= (self.in_buf[2] & 0x80) >> 7
     result &= 0x3FF
-    return result 
+    return result
 
-
-  def read_adc(self, channel):
-    """Read a single ADC channel and return the ADC value
-    as an integer. Channel must be a value within 0-7.
-    """
-    assert 0 <= channel <= 7, 'Channel number must be a value within 0-7!'
-    return self._read(channel)
-
-
-  def read_volts(self, channel, voltage=3.3):
-    """Read a single ADC channel and return the ADC value
-    as a float. Channel must be a value within 0-7.
-    """
-    assert 0 <= channel <= 7, 'Channel must be a value within 0-7!'
-    raw_read = self.read_adc(channel)
-    return (raw_read * voltage) / 1023
-
-  def read_adc_difference(self, differential):
-    """Read the difference between two ADC channels and return the
-    value as an integer. Differential must be one of:
-    - 0: Return channel 0 minus channel 1
-    - 1: Return channel 1 minus channel 0
-    - 2: Return channel 2 minus channel 3
-    - 3: Return channel 3 minus channel 2
-    - 4: Return channel 4 minus channel 5
-    - 5: Return channel 5 minus channel 4
-    - 6: Return channel 6 minus channel 7
-    - 7: Return channel 7 minus channel 6
-    """
-    assert 0 <= differential <= 7, 'Differential must be a value within 0-7!'
-    return self._read(differential, is_differential=True)
-  
-  def read_volts_difference(self, differential, voltage=3.3):
-    """Read the difference between two ADC channels and return the
-    voltage as an float. Differential must be one of:
-    - 0: Return channel 0 minus channel 1
-    - 1: Return channel 1 minus channel 0
-    - 2: Return channel 2 minus channel 3
-    - 3: Return channel 3 minus channel 2
-    - 4: Return channel 4 minus channel 5
-    - 5: Return channel 5 minus channel 4
-    - 6: Return channel 6 minus channel 7
-    - 7: Return channel 7 minus channel 6
-    """
-    assert 0 <= differential <= 7, 'Differential must be a value within 0-7!'
-    raw_read = self.read_adc_difference(differential)
-    return (raw_read * voltage) / 1023
