@@ -37,22 +37,15 @@ class MCP3xxx_SingleEnded(MCP3xxx):
     """Base functionality for MCP3xxx analog to digital converters operating
     in single ended mode."""
 
-    def __getitem__(self, key):
-        return self._pins[key]
-
     def read_adc(self, pin):
-        """Read a single ADC pin and return the value as an integer.
-        pin must be a value be within 0-7.
-        """
-        assert 0 <= pin <= 7, 'pin must be a value within 0-7!'
         return self._read(pin)
-    
-    def read_volts(self, channel, voltage=3.3):
+
+    def read_volts(self, pin, voltage=3.3):
         """Read a single ADC channel and return the voltage as a floating point
         result. Channel must be a value within 0-3.
         """
-        assert 0 <= channel <= 7, 'Channel must be a value within 0-7!'
-        raw_read = self._read(channel)
+        assert 0 <= pin <= 7, 'Channel must be a value within 0-7!'
+        raw_read = self._read(pin)
         return (raw_read * voltage) / 1023
 
 class MCP3008(MCP3xxx_SingleEnded):
@@ -62,7 +55,7 @@ class MCP3008(MCP3xxx_SingleEnded):
         super(MCP3008, self).__init__(*args, **kwargs)
 
     def _read_pin(self, pin):
-        return self.read_adc(pin)
-    
-    def _read_channel_volts(self, channel):
-        return self.read_volts(channel)
+        return self._read(pin)
+
+    def _read_pin_volts(self, pin):
+        return self.read_volts(pin)

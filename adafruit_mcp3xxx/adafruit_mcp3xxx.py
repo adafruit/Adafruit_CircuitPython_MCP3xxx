@@ -65,17 +65,15 @@ class AnalogInput(object):
     self._adc = adc
     self._pin = pin
 
-
   @property
   def value(self):
-    """ADC raw reading."""
+    """ADC pin raw reading."""
     return self._adc._read_pin(self._pin)
   
   @property
   def volts(self):
-    """ADC reading in volts."""
-    return self._adc._read_channel_volts(self._pin)
-
+    """ADC pin reading in volts."""
+    return self._adc._read_pin_volts(self._pin)
 
 class MCP3xxx(object):
   """Base functionality for MCP3xxx analog to digital converters."""
@@ -84,21 +82,19 @@ class MCP3xxx(object):
     self.spi_device = SPIDevice(spi, cs)
     self.out_buf = bytearray(3)
     self.in_buf = bytearray(3)
-    self.analog = AnalogInput(self, pin)
-    #print(self.analog.value)
-
+    self.pin = AnalogInput(self, pin)
 
   def _read_pin(self, pin):
       """Subclasses should override this function to return a value for the
-      requested pins as a signed integer value.
+      requested pin as a signed integer value.
       """
       raise NotImplementedError('Subclass must implement _read_pin function!')
 
-  def _read_channel_volts(self, channel):
+  def _read_pin_volts(self, pin):
       """Subclasses should override this function to return a value for the
-      requested channels as a float value.
+      requested pin as a float value.
       """
-      raise NotImplementedError('Subclass must implement _read_channel_volts function!')
+      raise NotImplementedError('Subclass must implement _read_pin_volts function!')
 
   def _read(self, pin, is_differential=False):
     """SPI transfer for ADC reads.
