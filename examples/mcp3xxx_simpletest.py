@@ -12,12 +12,14 @@ cs = digitalio.DigitalInOut(board.D5)
 # create a mcp3008 object
 mcp = adafruit_mcp3xxx.MCP3008(spi,cs)
 
-# create an an adc object on pin 0
-adc0 = adafruit_mcp3xxx.AnalogIn(mcp, 0)
+# create an an adc (single-ended) on pin 0
+adc_single_ended = adafruit_mcp3xxx.AnalogIn(mcp, 0)
+print('\nADC')
+print('\tValue: ', adc_single_ended.value)
+print('\tVolts: ', adc_single_ended.volts)
 
-print(adc0.value)
-print(adc0.volts)
-
-
-adc_diff = adafruit_mcp3xxx.AnalogIn_Differential(mcp, 1, 0)
-print(adc_diff.value)
+# create an an adc (differential) on pin 0
+adc_diff = adafruit_mcp3xxx.AnalogIn_Differential(mcp, 0, 1)
+print('\nDifferential ADC')
+print('\tDiff. Value: ', adc_diff.value)
+print('\tDiff. Voltage: ', adc_diff.volts)

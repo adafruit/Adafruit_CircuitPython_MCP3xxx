@@ -149,14 +149,21 @@ class MCP3008(MCP3xxx):
     def _read_pin_volts(self, pin, voltage):
       """Reads a MCP3008 pin, returns the voltage as a floating point value."""
       assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
-      raw_read = self._read(pin)
-      return (raw_read * voltage) / 1023
+      v_in = self._read(pin)
+      return (v_in * voltage) / 1023
     
     def _read_pin_differential(self, pin_1, pin_2):
-      """Reads a MCP3008 differential value, returns the value as an integer."""      
+      """Reads a MCP3008 differential pin value, returns the value as an integer."""      
       diff_pin = diff_read_pin(pin_1, pin_2)
-      assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair'
+      assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair.'
       return self._read(diff_pin, is_differential=True)
+    
+    def _read_pin_volts_differential(self, pin_1, pin_2, voltage):
+      """Reads a MCP3008 differential pin value, returns the voltage as a floating point value."""
+      diff_pin = diff_read_pin(pin_1, pin_2)
+      assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair.'
+      v_in = self._read(diff_pin, is_differential=True)
+      return (v_in * voltage) / 1023
 
 
 class AnalogIn(object):
@@ -182,6 +189,7 @@ class AnalogIn(object):
     """Returns the voltage from an ADC pin as a floating point value.
     """
     return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
+
 
 class AnalogIn_Differential(object):
   """Reads the difference between two signals
