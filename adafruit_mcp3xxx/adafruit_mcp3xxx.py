@@ -47,7 +47,6 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
 # imports
 from micropython import const
-
 import digitalio
 from adafruit_bus_device.spi_device import SPIDevice
 
@@ -55,34 +54,22 @@ from adafruit_bus_device.spi_device import SPIDevice
 MCP3008_OUT_BUFF      = const(0x00)
 MCP3008_DIFF_READ     = const(0b10)
 MCP3008_SINGLE_READ   = const(0b11)
-CS_PIN                = 'D5'
 
-# adc = MCP3008.AnalogInput(PIN)
-
-class AnalogInput(object):
-  """Mock AnalogInput for ADC readings."""
-  def __init__(self, adc, pin):
-    self._adc = adc
-    self._pin = pin
-
-  @property
-  def value(self):
-    """ADC pin raw reading."""
-    return self._adc._read_pin(self._pin)
-  
-  @property
-  def volts(self):
-    """ADC pin reading in volts."""
-    return self._adc._read_pin_volts(self._pin)
 
 class MCP3xxx(object):
-  """Base functionality for MCP3xxx analog to digital converters."""
+  def __init__(self, spi_bus, cs, max_voltage=3.3):
+    """
+    Base MCP3xxx Interface
 
-  def __init__(self, pin, spi, cs):
-    self.spi_device = SPIDevice(spi, cs)
+    :param ~busdevice.SPIDevice spi_bus: SPI bus the ADC is on.
+    :param ~digitalio.DigitalInOut cs: Chip Select pin.
+    :param int max_voltage: Maximum voltage into the ADC, defaults to 3.3v.
+    :param bool differential: If true, ADC operates in differential mode.
+    """
+    self.spi_device = SPIDevice(spi_bus, cs)
     self.out_buf = bytearray(3)
     self.in_buf = bytearray(3)
-    self.pin = AnalogInput(self, pin)
+    self.max_voltage = max_voltage
 
   def _read_pin(self, pin):
       """Subclasses should override this function to return a value for the
@@ -122,3 +109,42 @@ class MCP3xxx(object):
     result |= (self.in_buf[2] & 0x80) >> 7
     result &= 0x3FF
     return result
+
+
+class MCP3008(MCP3xxx):
+    """MCP3008 10-bit single ended analog to digital converter instance
+    
+    mcp = MCP3008(spi_bus, cs)
+    """
+    def __init__(self, spi_bus, cs):
+        super(MCP3008, self).__init__(spi_bus, cs)
+
+    def _read_pin(self, pin):
+        return self._read(pin)
+
+    def _read_pin_volts(self, pin, voltage):
+      raw_read = self._read(pin)
+      return (raw_read * voltage) / 1023
+
+
+class AnalogIn(object):
+  """AnalogIn for ADC readings.
+  
+  adc0 = mcp3xxx.AnalogIn(mcp, 0)
+
+  :param adc: mcp3xxx object
+  :param pin: mcp3xx analog pin
+  """
+  def __init__(self, adc, pin):
+    self._adc = adc
+    self._pin = pin
+
+  @property
+  def value(self):
+    """ADC pin raw reading."""
+    return self._adc._read_pin(self._pin)
+  
+  @property
+  def volts(self):
+    """ADC pin reading in volts."""
+    return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
