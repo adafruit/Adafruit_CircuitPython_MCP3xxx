@@ -55,7 +55,27 @@ MCP3008_OUT_BUFF      = const(0x00)
 MCP3008_DIFF_READ     = const(0b10)
 MCP3008_SINGLE_READ   = const(0b11)
 
-# differential read values
+# differential read channels
+def diff_read_pin(pin_1, pin_2):
+  if (pin_1 == 0 and pin_2 == 1):
+      pin_diff = 0
+  elif (pin_1 == 1 and pin_2 == 0):
+      pin_diff = 1
+  elif (pin_1 == 2 and pin_2 == 3):
+      pin_diff = 2
+  elif (pin_1 == 3 and pin_2 == 2):
+      pin_diff = 3
+  elif (pin_1 == 4 and pin_2 == 5):
+      pin_diff = 4
+  elif (pin_1 == 5 and pin_2 == 4):
+      pin_diff = 5
+  elif (pin_1 == 6 and pin_2 == 7):
+      pin_diff = 6
+  elif (pin_1 == 6 and pin_2 == 6):
+      pin_diff = 7
+  else:
+      pin_diff = -1
+  return pin_diff
 
 
 class MCP3xxx(object):
@@ -92,7 +112,7 @@ class MCP3xxx(object):
       bool is_differential: single-ended or differential read.
     """
     # build adc read command
-    if is_differential:
+    if is_differential == True:
       command = MCP3008_DIFF_READ << 6
     else:
       command = MCP3008_SINGLE_READ << 6
@@ -132,16 +152,11 @@ class MCP3008(MCP3xxx):
       raw_read = self._read(pin)
       return (raw_read * voltage) / 1023
     
-    def _read_pin_differential(self, pin):
+    def _read_pin_differential(self, pin_1, pin_2):
       """Reads a MCP3008 differential value, returns the value as an integer."""      
-      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
-      return self._read(pin, is_differential=True)
-    
-    def _read_pin_volts_differential(self, pin, voltage):
-      """Reads a MCP3008 differential voltage, returns the value as an float."""
-      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
-      raw_read = self._read(pin, is_differential=True)
-      return (raw_read * voltage) / 1023
+      diff_pin = diff_read_pin(pin_1, pin_2)
+      assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair'
+      return self._read(diff_pin, is_differential=True)
 
 
 class AnalogIn(object):
@@ -169,25 +184,27 @@ class AnalogIn(object):
     return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
 
 class AnalogIn_Differential(object):
-  """Performs differential ADC readings.
+  """Reads the difference between two signals
 
-  adc = adafruit_mcp3xxx.AnalogIn_Differential(mcp, differential_value)
+  adc = adafruit_mcp3xxx.AnalogIn_Differential(mcp, pin_1, pin_2)
 
   :param adc: mcp3xxx object.
-  :param pin: mcp3xxx analog pin.
+  :param pin_1: mcp3xxx analog pin 1.
+  :param pin_2: mcp3xxx analog pin 2.
   """
-  def __init__(self, adc, pin):
+  def __init__(self, adc, pin_1, pin_2):
     self._adc = adc
-    self._pin = pin
+    self._pin_1 = pin_1
+    self._pin_2 = pin_2
 
   @property
-  def value(self, ):
+  def value(self):
     """Returns the value from a differential read across two pins as an integer.
     """
-    return self._adc._read_pin_differential(self._pin)
+    return self._adc._read_pin_differential(self._pin_1, self._pin_2)
 
   @property
-  def volts(self, differential):
+  def volts(self):
     """Returns the voltage from a differential read across two pins as a floating point value.
     """
-    return self._adc._read_pin_volts_differential(self._pin, self._adc.max_voltage)
+    return self._adc._read_pin_volts_differential(self._pin_1, self._pin_2, self._adc.max_voltage)
