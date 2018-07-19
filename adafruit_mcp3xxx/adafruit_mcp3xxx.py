@@ -55,28 +55,17 @@ MCP3008_OUT_BUFF      = const(0x00)
 MCP3008_DIFF_READ     = const(0b10)
 MCP3008_SINGLE_READ   = const(0b11)
 
-# differential read channels
-def diff_read_pin(pin_1, pin_2):
-  if (pin_1 == 0 and pin_2 == 1):
-      pin_diff = 0
-  elif (pin_1 == 1 and pin_2 == 0):
-      pin_diff = 1
-  elif (pin_1 == 2 and pin_2 == 3):
-      pin_diff = 2
-  elif (pin_1 == 3 and pin_2 == 2):
-      pin_diff = 3
-  elif (pin_1 == 4 and pin_2 == 5):
-      pin_diff = 4
-  elif (pin_1 == 5 and pin_2 == 4):
-      pin_diff = 5
-  elif (pin_1 == 6 and pin_2 == 7):
-      pin_diff = 6
-  elif (pin_1 == 6 and pin_2 == 6):
-      pin_diff = 7
-  else:
-      pin_diff = -1
-  return pin_diff
-
+# differential read pin, dict implementation
+MCP3008_DIFF_PINS = { 
+                  (0,1) : 0,
+                  (1,0) : 1,
+                  (2,3) : 2,
+                  (3,2) : 3,
+                  (4,5) : 4,
+                  (5,4) : 5,
+                  (6,7) : 6,
+                  (6,6) : 7
+}
 
 class MCP3xxx(object):
   def __init__(self, spi_bus, cs, max_voltage=3.3):
@@ -152,15 +141,13 @@ class MCP3008(MCP3xxx):
       v_in = self._read(pin)
       return (v_in * voltage) / 1023
     
-    def _read_pin_differential(self, pin_1, pin_2):
+    def _read_pin_differential(self, diff_pin):
       """Reads a MCP3008 differential pin value, returns the value as an integer."""      
-      diff_pin = diff_read_pin(pin_1, pin_2)
       assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair.'
       return self._read(diff_pin, is_differential=True)
     
-    def _read_pin_volts_differential(self, pin_1, pin_2, voltage):
+    def _read_pin_volts_differential(self, diff_pin, voltage):
       """Reads a MCP3008 differential pin value, returns the voltage as a floating point value."""
-      diff_pin = diff_read_pin(pin_1, pin_2)
       assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair.'
       v_in = self._read(diff_pin, is_differential=True)
       return (v_in * voltage) / 1023
@@ -200,6 +187,10 @@ class AnalogIn_Differential(object):
   :param pin_1: mcp3xxx analog pin 1.
   :param pin_2: mcp3xxx analog pin 2.
   """
+
+  def __getitem__(self, key):
+    return self._channels[MCP3008_DIFF_PINS[key]]
+
   def __init__(self, adc, pin_1, pin_2):
     self._adc = adc
     self._pin_1 = pin_1
@@ -209,10 +200,12 @@ class AnalogIn_Differential(object):
   def value(self):
     """Returns the value from a differential read across two pins as an integer.
     """
-    return self._adc._read_pin_differential(self._pin_1, self._pin_2)
+    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2))
+    return self._adc._read_pin_differential(diff_pin)
 
   @property
   def volts(self):
     """Returns the voltage from a differential read across two pins as a floating point value.
     """
-    return self._adc._read_pin_volts_differential(self._pin_1, self._pin_2, self._adc.max_voltage)
+    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2))
+    return self._adc._read_pin_volts_differential(diff_pin, self._adc.max_voltage)
