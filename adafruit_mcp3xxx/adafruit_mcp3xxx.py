@@ -112,20 +112,20 @@ class MCP3xxx(object):
 
 
 class MCP3008(MCP3xxx):
-    """MCP3008 10-bit single ended analog to digital converter instance
+    """MCP3008 10-bit analog to digital converter instance.
     
-    mcp = MCP3008(spi_bus, cs)
+    mcp = adafruit_mcp3xxx.MCP3008(spi,cs)
     """
     def __init__(self, spi_bus, cs):
-        super(MCP3008, self).__init__(self,spi_bus, cs)
-        self.pin_count = 7 # mcp3008 has 8ch.
+        super(MCP3008, self).__init__(spi_bus, cs)
+        self.pin_count = 7 #mcp3008 has 8channels.
 
     def _read_pin(self, pin):
         assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
         return self._read(pin)
 
     def _read_pin_volts(self, pin, voltage):
-      assert 0 <= pin <= 7, 'Pin must be a value between 0-7'
+      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
       raw_read = self._read(pin)
       return (raw_read * voltage) / 1023
 
@@ -133,7 +133,7 @@ class MCP3008(MCP3xxx):
 class AnalogIn(object):
   """AnalogIn for ADC readings.
   
-  adc0 = mcp3xxx.AnalogIn(mcp, 0)
+  adc0 = adafruit_mcp3xxx.AnalogIn(mcp, 0)
 
   :param adc: mcp3xxx object
   :param pin: mcp3xx analog pin
