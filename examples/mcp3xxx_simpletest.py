@@ -1,8 +1,7 @@
-#####
 import busio
 import digitalio
 import board
-from adafruit_mcp3xxx import AnalogIn
+from adafruit_mcp3xxx import adafruit_mcp3xxx
 
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -11,7 +10,7 @@ spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 cs = digitalio.DigitalInOut(board.D5)
 
 # create the mcp object (mcp3008 type)
-mcp = MCP3008(spi,cs)
+mcp = adafruit_mcp3xxx.MCP3008(spi,cs)
 
 print(mcp)
 

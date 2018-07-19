@@ -117,12 +117,15 @@ class MCP3008(MCP3xxx):
     mcp = MCP3008(spi_bus, cs)
     """
     def __init__(self, spi_bus, cs):
-        super(MCP3008, self).__init__(spi_bus, cs)
+        super(MCP3008, self).__init__(self,spi_bus, cs)
+        self.pin_count = 7 # mcp3008 has 8ch.
 
     def _read_pin(self, pin):
+        assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
         return self._read(pin)
 
     def _read_pin_volts(self, pin, voltage):
+      assert 0 <= pin <= 7, 'Pin must be a value between 0-7'
       raw_read = self._read(pin)
       return (raw_read * voltage) / 1023
 
