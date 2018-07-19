@@ -55,6 +55,8 @@ MCP3008_OUT_BUFF      = const(0x00)
 MCP3008_DIFF_READ     = const(0b10)
 MCP3008_SINGLE_READ   = const(0b11)
 
+# differential read values
+
 
 class MCP3xxx(object):
   def __init__(self, spi_bus, cs, max_voltage=3.3):
@@ -143,35 +145,49 @@ class MCP3008(MCP3xxx):
 
 
 class AnalogIn(object):
-  """AnalogIn for ADC readings.
+  """AnalogIn for single-ended ADC readings.
   
-  adc0 = adafruit_mcp3xxx.AnalogIn(mcp, 0)
+  adc = adafruit_mcp3xxx.AnalogIn(mcp, pin)
 
-  :param adc: mcp3xxx object
-  :param pin: mcp3xx analog pin
+  :param adc: mcp3xxx object.
+  :param pin: mcp3xxx analog pin.
   """
   def __init__(self, adc, pin):
     self._adc = adc
     self._pin = pin
 
   @property
-  def value(self, differential=False):
+  def value(self):
     """Returns the value of an ADC pin as an integer.
-
-    :param bool differential: If true, ADC operates in differential mode.
     """
-    if differential == True:
-      return self._adc._read_pin_differential(self._pin)
-    else:
-      return self._adc._read_pin(self._pin)
+    return self._adc._read_pin(self._pin)
 
   @property
-  def volts(self, differential=False):
+  def volts(self):
     """Returns the voltage from an ADC pin as a floating point value.
-
-    :param bool differential: If true, ADC operates in differential mode.
     """
-    if differential == True:
-      return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
-    else:
-      return self._adc._read_pin_volts_differential(self._pin, self._adc.max_voltage)
+    return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
+
+class AnalogIn_Differential(object):
+  """Performs differential ADC readings.
+
+  adc = adafruit_mcp3xxx.AnalogIn_Differential(mcp, differential_value)
+
+  :param adc: mcp3xxx object.
+  :param pin: mcp3xxx analog pin.
+  """
+  def __init__(self, adc, pin):
+    self._adc = adc
+    self._pin = pin
+
+  @property
+  def value(self, ):
+    """Returns the value from a differential read across two pins as an integer.
+    """
+    return self._adc._read_pin_differential(self._pin)
+
+  @property
+  def volts(self, differential):
+    """Returns the voltage from a differential read across two pins as a floating point value.
+    """
+    return self._adc._read_pin_volts_differential(self._pin, self._adc.max_voltage)
