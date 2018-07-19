@@ -64,7 +64,6 @@ class MCP3xxx(object):
     :param ~busdevice.SPIDevice spi_bus: SPI bus the ADC is on.
     :param ~digitalio.DigitalInOut cs: Chip Select pin.
     :param int max_voltage: Maximum voltage into the ADC, defaults to 3.3v.
-    :param bool differential: If true, ADC operates in differential mode.
     """
     self.spi_device = SPIDevice(spi_bus, cs)
     self.out_buf = bytearray(3)
@@ -121,12 +120,25 @@ class MCP3008(MCP3xxx):
         self.pin_count = 7 #mcp3008 has 8channels.
 
     def _read_pin(self, pin):
-        assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
-        return self._read(pin)
+      """Reads a MCP3008 pin, returns the value as an integer."""
+      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
+      return self._read(pin)
 
     def _read_pin_volts(self, pin, voltage):
+      """Reads a MCP3008 pin, returns the voltage as a floating point value."""
       assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
       raw_read = self._read(pin)
+      return (raw_read * voltage) / 1023
+    
+    def _read_pin_differential(self, pin):
+      """Reads a MCP3008 differential value, returns the value as an integer."""      
+      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
+      return self._read(pin, is_differential=True)
+    
+    def _read_pin_volts_differential(self, pin, voltage):
+      """Reads a MCP3008 differential voltage, returns the value as an float."""
+      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
+      raw_read = self._read(pin, is_differential=True)
       return (raw_read * voltage) / 1023
 
 
@@ -143,11 +155,23 @@ class AnalogIn(object):
     self._pin = pin
 
   @property
-  def value(self):
-    """ADC pin raw reading."""
-    return self._adc._read_pin(self._pin)
-  
+  def value(self, differential=False):
+    """Returns the value of an ADC pin as an integer.
+
+    :param bool differential: If true, ADC operates in differential mode.
+    """
+    if differential == True:
+      return self._adc._read_pin_differential(self._pin)
+    else:
+      return self._adc._read_pin(self._pin)
+
   @property
-  def volts(self):
-    """ADC pin reading in volts."""
-    return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
+  def volts(self, differential=False):
+    """Returns the voltage from an ADC pin as a floating point value.
+
+    :param bool differential: If true, ADC operates in differential mode.
+    """
+    if differential == True:
+      return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
+    else:
+      return self._adc._read_pin_volts_differential(self._pin, self._adc.max_voltage)

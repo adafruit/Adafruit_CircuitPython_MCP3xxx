@@ -13,7 +13,7 @@ cs = digitalio.DigitalInOut(board.D5)
 mcp = adafruit_mcp3xxx.MCP3008(spi,cs)
 
 # create an an adc object on pin 0
-adc0 = adafruit_mcp3xxx.AnalogIn(mcp, 0)
+adc0 = adafruit_mcp3xxx.AnalogIn(mcp, 12)
 
 print(adc0.value)
 print(adc0.volts)
