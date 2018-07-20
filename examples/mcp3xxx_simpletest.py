@@ -12,6 +12,9 @@ cs = digitalio.DigitalInOut(board.D5)
 # create a mcp3008 object
 mcp = adafruit_mcp3xxx.MCP3008(spi,cs)
 
+# create a mcp3002 object
+#mcp = adafruit_mcp3xxx.MCP3002(spi,cs)
+
 # create an an adc (single-ended) on pin 0
 adc_single_ended = adafruit_mcp3xxx.AnalogIn(mcp, 0)
 print('\nADC')

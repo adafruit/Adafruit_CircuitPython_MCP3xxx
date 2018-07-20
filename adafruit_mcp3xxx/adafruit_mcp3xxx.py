@@ -128,7 +128,6 @@ class MCP3xxx():
         return result
 
 
-
 class MCP3008(MCP3xxx):
     """MCP3008 10-bit analog to digital converter instance.
 
@@ -153,6 +152,34 @@ class MCP3008(MCP3xxx):
 
     def _read_pin_volts_differential(self, diff_pin, voltage):
         """Reads a MCP3008 differential pin value, returns the voltage as a floating point value."""
+        v_in = self._read(diff_pin, is_differential=True)
+        return (v_in * voltage) / 1023
+
+
+class MCP3002(MCP3xxx):
+    """MCP3002 10-bit analog to digital converter instance.
+
+    mcp = adafruit_mcp3xxx.MCP3002(spi,cs)
+    """
+    def __init__(self, spi_bus, cs):
+        super(MCP3002, self).__init__(spi_bus, cs)
+        self.pin_count = 2 #mcp3002 has 2channels.
+
+    def _read_pin(self, pin):
+        """Reads a MCP3002 pin, returns the value as an integer."""
+        return self._read(pin)
+
+    def _read_pin_volts(self, pin, voltage):
+        """Reads a MCP3002 pin, returns the voltage as a floating point value."""
+        v_in = self._read(pin)
+        return (v_in * voltage) / 1023
+
+    def _read_pin_differential(self, diff_pin):
+        """Reads a MCP3002 differential pin value, returns the value as an integer."""
+        return self._read(diff_pin, is_differential=True)
+
+    def _read_pin_volts_differential(self, diff_pin, voltage):
+        """Reads a MCP3002 differential pin value, returns the voltage as a floating point value."""
         v_in = self._read(diff_pin, is_differential=True)
         return (v_in * voltage) / 1023
 
