@@ -198,12 +198,12 @@ class AnalogIn_Differential(object):
   def value(self):
     """Returns the value from a differential read across two pins as an integer.
     """
-    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2), None)
+    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2), "Difference pin not found.")
     return self._adc._read_pin_differential(diff_pin)
 
   @property
   def volts(self):
     """Returns the voltage from a differential read across two pins as a floating point value.
     """
-    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2))
+    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2), "Difference pin not found.")
     return self._adc._read_pin_volts_differential(diff_pin, self._adc.max_voltage)
