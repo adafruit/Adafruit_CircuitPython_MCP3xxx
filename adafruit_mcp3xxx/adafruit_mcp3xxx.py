@@ -98,15 +98,16 @@ class MCP3xxx():
         """
         raise NotImplementedError('Subclass must implement _read_pin_volts function!')
 
-    def _read(self, pin, is_differential=False):
+    def _read(self, pin, pin_count, is_differential=False):
         """SPI transfer for ADC reads.
 
         params:
-          int pin: individual pin or differential.
-          bool is_differential: single-ended or differential read.
+          :param int pin: individual pin or differential.
+          :param int pint_count: avaliable pins on the mcp3xxx.
+          :param bool is_differential: single-ended or differential read.
         """
-        if (pin < 0 or pin > 7):
-            raise ValueError('Pin must be a value between 0 and 7')
+        if (pin < 0 or pin > pin_count):
+            raise ValueError('Pin must be a value between 0 and ' + str(pin_count))
         # build adc read command
         if is_differential:
             command = MCP3008_DIFF_READ << 6
@@ -128,7 +129,6 @@ class MCP3xxx():
         return result
 
 
-
 class MCP3008(MCP3xxx):
     """MCP3008 10-bit analog to digital converter instance.
 
@@ -140,20 +140,20 @@ class MCP3008(MCP3xxx):
 
     def _read_pin(self, pin):
         """Reads a MCP3008 pin, returns the value as an integer."""
-        return self._read(pin)
+        return self._read(pin, self.pin_count)
 
     def _read_pin_volts(self, pin, voltage):
         """Reads a MCP3008 pin, returns the voltage as a floating point value."""
-        v_in = self._read(pin)
+        v_in = self._read(pin, self.pin_count)
         return (v_in * voltage) / 1023
 
     def _read_pin_differential(self, diff_pin):
         """Reads a MCP3008 differential pin value, returns the value as an integer."""
-        return self._read(diff_pin, is_differential=True)
+        return self._read(diff_pin, self.pin_count, is_differential=True)
 
     def _read_pin_volts_differential(self, diff_pin, voltage):
         """Reads a MCP3008 differential pin value, returns the voltage as a floating point value."""
-        v_in = self._read(diff_pin, is_differential=True)
+        v_in = self._read(diff_pin, self.pin_count, is_differential=True)
         return (v_in * voltage) / 1023
 
 
