@@ -66,7 +66,7 @@ MCP3008_DIFF_PINS = {
     (6, 6) : 7
 }
 
-class MCP3xxx(object):
+class MCP3xxx():
     """Base MCP3xxx Interface."""
 
     def __init__(self, spi_bus, cs, max_voltage=3.3):
@@ -157,7 +157,7 @@ class MCP3008(MCP3xxx):
         return (v_in * voltage) / 1023
 
 
-class AnalogIn(object):
+class AnalogIn():
     """AnalogIn for single-ended ADC readings.
 
     adc = adafruit_mcp3xxx.AnalogIn(mcp, pin)
@@ -182,7 +182,7 @@ class AnalogIn(object):
         return self._adc._read_pin_volts(self._pin, self._adc.max_voltage)
 
 
-class AnalogIn_Differential(object):
+class AnalogIn_Differential():
     """Reads the difference between two signals
 
     adc = adafruit_mcp3xxx.AnalogIn_Differential(mcp, pin_1, pin_2)
