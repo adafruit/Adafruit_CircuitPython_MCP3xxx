@@ -55,7 +55,7 @@ MCP3008_OUT_BUFF      = const(0x00)
 MCP3008_DIFF_READ     = const(0b10)
 MCP3008_SINGLE_READ   = const(0b11)
 
-# differential read pin, dict implementation
+# differential pin pairs -> channel
 MCP3008_DIFF_PINS = { 
                   (0,1) : 0,
                   (1,0) : 1,
@@ -100,6 +100,8 @@ class MCP3xxx(object):
       int pin: individual pin or differential.
       bool is_differential: single-ended or differential read.
     """
+    if (pin < 0 or pin > 7):
+      raise ValueError('Pin must be a value between 0 and 7')
     # build adc read command
     if is_differential == True:
       command = MCP3008_DIFF_READ << 6
@@ -132,23 +134,19 @@ class MCP3008(MCP3xxx):
 
     def _read_pin(self, pin):
       """Reads a MCP3008 pin, returns the value as an integer."""
-      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
       return self._read(pin)
 
     def _read_pin_volts(self, pin, voltage):
       """Reads a MCP3008 pin, returns the voltage as a floating point value."""
-      assert 0 <= pin <= self.pin_count, 'Pin must be a value between 0-7'
       v_in = self._read(pin)
       return (v_in * voltage) / 1023
     
     def _read_pin_differential(self, diff_pin):
       """Reads a MCP3008 differential pin value, returns the value as an integer."""      
-      assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair.'
       return self._read(diff_pin, is_differential=True)
     
     def _read_pin_volts_differential(self, diff_pin, voltage):
       """Reads a MCP3008 differential pin value, returns the voltage as a floating point value."""
-      assert 0 <= diff_pin <= 7, 'Invalid Differential Pin Pair.'
       v_in = self._read(diff_pin, is_differential=True)
       return (v_in * voltage) / 1023
 
@@ -200,7 +198,7 @@ class AnalogIn_Differential(object):
   def value(self):
     """Returns the value from a differential read across two pins as an integer.
     """
-    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2))
+    diff_pin = MCP3008_DIFF_PINS.get((self._pin_1,self._pin_2), None)
     return self._adc._read_pin_differential(diff_pin)
 
   @property
