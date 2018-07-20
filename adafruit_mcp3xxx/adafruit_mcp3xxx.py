@@ -49,12 +49,12 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 from micropython import const
 from adafruit_bus_device.spi_device import SPIDevice
 
-# configuration values
-MCP3008_OUT_BUFF = const(0x00)
-MCP3008_DIFF_READ = const(0b10)
-MCP3008_SINGLE_READ = const(0b11)
+# MCP3004/008 data transfer commands
+MCP30084_OUT_BUFF = const(0x00)
+MCP30084_DIFF_READ = const(0b10)
+MCP30084_SINGLE_READ = const(0b11)
 
-# differential pin pairs -> channel
+# differential pins: mcp3008
 MCP3008_DIFF_PINS = {
     (0, 1) : 0,
     (1, 0) : 1,
@@ -65,6 +65,10 @@ MCP3008_DIFF_PINS = {
     (6, 7) : 6,
     (6, 6) : 7
 }
+
+# mcp3xxx identifiers
+MCP_3004 = const(0x04)
+MCP_3008 = const(0x08)
 
 class MCP3xxx():
     """Base MCP3xxx Interface."""
@@ -110,13 +114,13 @@ class MCP3xxx():
             raise ValueError('Pin must be a value between 0 and ' + str(pin_count))
         # build adc read command
         if is_differential:
-            command = MCP3008_DIFF_READ << 6
+            command = MCP30084_DIFF_READ << 6
         else:
-            command = MCP3008_SINGLE_READ << 6
+            command = MCP30084_SINGLE_READ << 6
         command |= ((pin & 0x07) << 3)
         self.out_buf[0] = command
-        self.out_buf[1] = MCP3008_OUT_BUFF
-        self.out_buf[2] = MCP3008_OUT_BUFF
+        self.out_buf[1] = MCP30084_OUT_BUFF
+        self.out_buf[2] = MCP30084_OUT_BUFF
         # spi transfer
         with self.spi_device as spi:
             spi.write_readinto(self.out_buf, self.in_buf, out_start=0,
@@ -137,6 +141,7 @@ class MCP3008(MCP3xxx):
     def __init__(self, spi_bus, cs):
         super(MCP3008, self).__init__(spi_bus, cs)
         self.pin_count = 7 #mcp3008 has 8channels.
+        self.type = MCP_3008
 
     def _read_pin(self, pin):
         """Reads a MCP3008 pin, returns the value as an integer."""
@@ -156,6 +161,33 @@ class MCP3008(MCP3xxx):
         v_in = self._read(diff_pin, self.pin_count, is_differential=True)
         return (v_in * voltage) / 1023
 
+class MCP3004(MCP3xxx):
+    """MCP3004 10-bit analog to digital converter instance.
+
+    mcp = adafruit_mcp3xxx.MCP3004(spi,cs)
+    """
+    def __init__(self, spi_bus, cs):
+        super(MCP3004, self).__init__(spi_bus, cs)
+        self.pin_count = 3 #MCP3004 has 4channels.
+        self.type = MCP_3004
+
+    def _read_pin(self, pin):
+        """Reads a MCP3004 pin, returns the value as an integer."""
+        return self._read(pin, self.pin_count)
+
+    def _read_pin_volts(self, pin, voltage):
+        """Reads a MCP3004 pin, returns the voltage as a floating point value."""
+        v_in = self._read(pin, self.pin_count)
+        return (v_in * voltage) / 1023
+
+    def _read_pin_differential(self, diff_pin):
+        """Reads a MCP3004 differential pin value, returns the value as an integer."""
+        return self._read(diff_pin, self.pin_count, is_differential=True)
+
+    def _read_pin_volts_differential(self, diff_pin, voltage):
+        """Reads a MCP3004 differential pin value, returns the voltage as a floating point value."""
+        v_in = self._read(diff_pin, self.pin_count, is_differential=True)
+        return (v_in * voltage) / 1023
 
 class AnalogIn():
     """AnalogIn for single-ended ADC readings.

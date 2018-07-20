@@ -18,6 +18,7 @@ CircuitPython library for the MCP3xxx series of analog-to-digital converters.
 Currently supports:
 
 *  `MCP3008: 8-Channel 10-Bit ADC With SPI Interface <https://www.adafruit.com/product/856>`_
+*   MCP3004: 4-Channel 10-Bit ADC With SPI Interface
 
 
 Dependencies
