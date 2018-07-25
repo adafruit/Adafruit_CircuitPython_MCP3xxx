@@ -98,16 +98,14 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
 
-"""
-Mcp = mcp3xxx.mcp3008(spi_bus, cs)
-Chan = mcp.AnalogIn(MCP3008.P0)
-"""
-
-
-
 # imports
 from micropython import const
 from adafruit_bus_device.spi_device import SPIDevice
+
+# MCP3004/008 data transfer commands
+MCP30084_OUT_BUFF = const(0x00)
+MCP30084_DIFF_READ = const(0b10)
+MCP30084_SINGLE_READ = const(0b11)
 
 class mcp3xxx():
   """ mcp3xxx adc interface."""

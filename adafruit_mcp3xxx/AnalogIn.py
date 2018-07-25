@@ -27,20 +27,17 @@ AnalogIn implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
-    """
-    Mcp = mcp3xxx.mcp3008(spi_bus, cs)
-Chan = mcp.AnalogIn(MCP3008.P0)
-    """
 
 class AnalogIn():
-    """Single-ended ADC reads"""
-    def __init__(self, pin):
+    def __init__(self, mcp, pin):
+        self._mcp = mcp
         self._pin = pin
-
+        
     @property
     def value(self):
-        """Ret. adc pin value"""
+        """calls read, returns int. value"""
+
     
     @property
     def voltage(self):
-        """Ret. voltage from adc pin"""
+        """calls read, performs voltage calculation"""
