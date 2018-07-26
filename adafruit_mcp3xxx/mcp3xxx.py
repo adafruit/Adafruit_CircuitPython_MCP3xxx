@@ -39,7 +39,7 @@ Implementation Notes
 
 * Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
-  
+
 .. todo:: Uncomment or remove the Bus Device and/or the Register library dependencies based on the library's use of either.
 
 # * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
@@ -98,53 +98,50 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
 
-# imports
 from micropython import const
 from adafruit_bus_device.spi_device import SPIDevice
 
 # MCP3004/008 data transfer commands
-MCP30084_OUT_BUFF = const(0x00)
-MCP30084_DIFF_READ = const(0b10)
-MCP30084_SINGLE_READ = const(0b11)
+_MCP30084_OUT_BUFF = const(0x00)
+_MCP30084_DIFF_READ = const(0b10)
+_MCP30084_SINGLE_READ = const(0b11)
 
-class mcp3xxx():
+class MCP3xxx:
   """ mcp3xxx adc interface."""
 
   def init(self, spi_bus, cs, ref_voltage=3.3):
-    self.spi_device = SPIDevice(spi_bus, cs)
-    self.out_buf = bytearray(3)
-    self.out_buf = bytearray(3)
-    self.ref_voltage = ref_voltage
+    self._spi_device = SPIDevice(spi_bus, cs)
+    self._out_buf = bytearray(3)
+    self._in_buf = bytearray(3)
+    self._ref_voltage = ref_voltage
 
     @property
     def reference_voltage(self):
-      return self.max_voltage
-    
+        return self._ref_voltage
+
     def read(self, pin, is_differential=False):
         """SPI transfer for ADC reads.
 
         params:
-          :param int pin: individual pin or differential.
-          :param int pint_count: avaliable pins on the mcp3xxx.
-          :param bool is_differential: single-ended or differential read.
+            :param int pin: individual pin or differential.
+            :param bool is_differential: single-ended or differential read.
         """
-        # TODO: Add error checking for pin count
+        # TODO: differential pin validation
+        if not (0 < pin <= self.PIN_MAX):
+            raise ValueError('pin out of range')
+
         # build adc read command
-        if is_differential:
-            command = MCP30084_DIFF_READ << 6
-        else:
-            command = MCP30084_SINGLE_READ << 6
-        command |= ((pin & 0x07) << 3)
+        command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
+        command |= pin << 3
         self.out_buf[0] = command
-        self.out_buf[1] = MCP30084_OUT_BUFF
-        self.out_buf[2] = MCP30084_OUT_BUFF
+        self.out_buf[1] = _MCP30084_OUT_BUFF
+        self.out_buf[2] = _MCP30084_OUT_BUFF
         # spi transfer
-        with self.spi_device as spi:
-            spi.write_readinto(self.out_buf, self.in_buf, out_start=0,
-                               out_end=len(self.out_buf), in_start=0, in_end=len(self.in_buf))
+        with self._spi_device as spi:
+            spi.write_readinto(self._out_buf, self._in_buf, out_start=0,
+                               out_end=len(self._out_buf), in_start=0, in_end=len(self._in_buf))
         # parse and ret. result (10b)
-        result = (self.in_buf[0] & 0x01) << 9
-        result |= (self.in_buf[1] & 0xFF) << 1
-        result |= (self.in_buf[2] & 0x80) >> 7
-        result &= 0x3FF
+        result = (self._in_buf[0] & 0x01) << 9
+        result |= self._in_buf[1] << 1
+        result |= self._in_buf[2] >> 7
         return result
