@@ -107,40 +107,29 @@ _MCP30084_DIFF_READ = const(0b10)
 _MCP30084_SINGLE_READ = const(0b11)
 
 class MCP3xxx:
-  """ mcp3xxx adc interface."""
-
-  def init(self, spi_bus, cs, ref_voltage=3.3):
-    self._spi_device = SPIDevice(spi_bus, cs)
-    self._out_buf = bytearray(3)
-    self._in_buf = bytearray(3)
-    self._ref_voltage = ref_voltage
-
+    def __init__(self, spi_bus, cs, ref_voltage=3.3):
+        self._spi_device = SPIDevice(spi_bus, cs)
+        self._out_buf = bytearray(3)
+        self._in_buf = bytearray(3)
+        self._ref_voltage = ref_voltage
+    
     @property
     def reference_voltage(self):
         return self._ref_voltage
 
     def read(self, pin, is_differential=False):
-        """SPI transfer for ADC reads.
-
-        params:
-            :param int pin: individual pin or differential.
-            :param bool is_differential: single-ended or differential read.
+        """SPI Interface for MCP3xxx-based ADCs.
         """
-        # TODO: differential pin validation
-        if not (0 < pin <= self.PIN_MAX):
+        if not (-1 < pin <= self.MAX_PIN):
             raise ValueError('pin out of range')
-
-        # build adc read command
         command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
         command |= pin << 3
-        self.out_buf[0] = command
-        self.out_buf[1] = _MCP30084_OUT_BUFF
-        self.out_buf[2] = _MCP30084_OUT_BUFF
-        # spi transfer
+        self._out_buf[0] = command
+        self._out_buf[1] = _MCP30084_OUT_BUFF
+        self._out_buf[2] = _MCP30084_OUT_BUFF
         with self._spi_device as spi:
             spi.write_readinto(self._out_buf, self._in_buf, out_start=0,
                                out_end=len(self._out_buf), in_start=0, in_end=len(self._in_buf))
-        # parse and ret. result (10b)
         result = (self._in_buf[0] & 0x01) << 9
         result |= self._in_buf[1] << 1
         result |= self._in_buf[2] >> 7

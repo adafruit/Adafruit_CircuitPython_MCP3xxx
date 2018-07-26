@@ -27,7 +27,7 @@ mcp3008 class implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
-from mcp3xxx import MCP3xxx
+from .mcp3xxx import MCP3xxx
 
 class MCP3008(MCP3xxx):
     """
@@ -44,5 +44,6 @@ class MCP3008(MCP3xxx):
 
     MAX_PIN = P7
 
-    def __init__(self, spi_bus, cs):
-        super().__init__(spi_bus, cs)
+    def __init__(self, spi_bus, cs, ref_voltage=3.3):
+        super().__init__(spi_bus, cs, ref_voltage)
+        self._ref_voltage = ref_voltage

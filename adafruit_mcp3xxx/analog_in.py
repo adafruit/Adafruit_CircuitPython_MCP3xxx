@@ -38,9 +38,8 @@ class AnalogIn():
         """calls read, returns int. value"""
         return self._mcp.read(self._pin)
 
-
     @property
     def voltage(self):
         """calls read, performs voltage calculation"""
         v_in = self._mcp.read(self._pin)
-        return (v_in * voltage) / 1023
+        return (v_in * self._mcp._ref_voltage) / 1023
