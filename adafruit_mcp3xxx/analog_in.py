@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`analogio.py`
+`analog_in.py`
 ================================================
+AnalogIn for single-ended ADC readings.
 
-AnalogIn implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
@@ -35,11 +35,11 @@ class AnalogIn():
 
     @property
     def value(self):
-        """calls read, returns int. value"""
+        """Returns the value of an ADC pin as an integer."""
         return self._mcp.read(self._pin)
 
     @property
     def voltage(self):
-        """calls read, performs voltage calculation"""
+        """Returns the voltage from the ADC pin as a floating point value."""
         v_in = self._mcp.read(self._pin)
         return (v_in * self._mcp._ref_voltage) / 1023

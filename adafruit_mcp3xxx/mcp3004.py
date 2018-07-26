@@ -22,8 +22,9 @@
 """
 `mcp3004.py`
 ================================================
+MCP3004 4-channel, 10-bit, analog-to-digital
+converter instance.
 
-MCP3008 class implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
@@ -37,8 +38,18 @@ class MCP3004(MCP3xxx):
     P1 = 1
     P2 = 2
     P3 = 3
-
     MAX_PIN = P3
 
-    def __init__(self, spi_bus, cs):
-        super().__init__(spi_bus, cs)
+    """
+    MCP3004 Diff. Channel Mapping.
+    """
+    MCP3004_DIFF_PINS = {
+        (0, 1) : P0,
+        (1, 0) : P1,
+        (2, 3) : P2,
+        (3, 2) : P3
+    }
+
+    def __init__(self, spi_bus, cs, ref_voltage=3.3):
+        super().__init__(spi_bus, cs, ref_voltage)
+        self._ref_voltage = ref_voltage

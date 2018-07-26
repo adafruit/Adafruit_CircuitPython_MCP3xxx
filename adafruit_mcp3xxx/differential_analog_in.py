@@ -21,34 +21,40 @@
 # THE SOFTWARE.
 """
 `differential_analogin.py`
-================================================
-
+======================================================
 Differential AnalogIn implementation for mcp3xxx ADCs.
+
 * Author(s): Brent Rubell
 """
 
 class DifferentialAnalogIn():
 
     def __getitem__(self, key):
-        return self._channels[self._mcp.MCP3008_DIFF_PINS[key]]
+        return self._channels[self._pins[key]]
 
     def __init__(self, mcp, pin_1, pin_2):
         self._mcp = mcp
         self._pin_1 = pin_1
         self._pin_2 = pin_2
         self._channels = []
+        if self._mcp.MAX_PIN == 7:
+            self._pins = self._mcp.MCP3008_DIFF_PINS
+        elif self._mcp.MAX_PIN == 3:
+            self._pins = self._mcp.MCP3004_DIFF_PINS
+        else:
+            raise TypeError ('MCP object requires MAX_PIN')
 
 
     @property
     def value(self):
         """calls read, returns differential value"""
-        diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
+        diff_pin = self._pins.get((self._pin_1, self._pin_2), "Difference pin not found.")
         print('Pin: ', diff_pin)
         return self._mcp.read(diff_pin, is_differential=True)
 
     @property
     def voltage(self):
         """calls read, performs differential voltage calculation"""
-        diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
+        diff_pin = self._pins.get((self._pin_1, self._pin_2), "Difference pin not found.")
         v_in = self._mcp.read(diff_pin, is_differential=True)
         return (v_in * 3.3) / 1023

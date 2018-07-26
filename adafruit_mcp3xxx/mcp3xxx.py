@@ -108,6 +108,14 @@ _MCP30084_SINGLE_READ = const(0b11)
 
 class MCP3xxx:
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
+        """
+        MCP3xxx Interface.
+
+        params:
+            :param ~busdevice.SPIDevice spi_bus: SPI bus the ADC is connected to.
+            :param ~digitalio.DigitalInOut cs: Chip Select Pin.
+            :param float ref_voltage: Voltage into (Vin) the ADC.
+        """
         self._spi_device = SPIDevice(spi_bus, cs)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
@@ -115,13 +123,18 @@ class MCP3xxx:
     
     @property
     def reference_voltage(self):
+        """Returns the MCP3xxx's reference voltage."""
         return self._ref_voltage
 
     def read(self, pin, is_differential=False):
-        """SPI Interface for MCP3xxx-based ADCs.
+        """SPI Interface for MCP3xxx-based ADCs reads.
+
+        params:
+            :param pin: individual or differential pin.
+            :param bool is_differential: single-ended or differential read.
         """
         if not (-1 < pin <= self.MAX_PIN):
-            raise ValueError('pin out of range')
+            raise ValueError('Pin must be a value between 0 and ', self.MAX_PIN)
         command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
         command |= pin << 3
         self._out_buf[0] = command

@@ -21,9 +21,10 @@
 # THE SOFTWARE.
 """
 `mcp3008.py`
-================================================
+=============================================
+MCP3008 8-channel, 10-bit, analog-to-digital
+converter instance.
 
-mcp3008 class implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
@@ -41,8 +42,21 @@ class MCP3008(MCP3xxx):
     P5 = 5
     P6 = 6
     P7 = 7
-
     MAX_PIN = P7
+
+    """
+    MCP3008 Diff. Channel Mapping.
+    """
+    MCP3008_DIFF_PINS = {
+        (0, 1) : P0,
+        (1, 0) : P1,
+        (2, 3) : P2,
+        (3, 2) : P3,
+        (4, 5) : P4,
+        (5, 4) : P5,
+        (6, 7) : P6,
+        (6, 6) : P7
+    }
 
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         super().__init__(spi_bus, cs, ref_voltage)
