@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2018 ladyada for Adafruit
+# Copyright (c) 2018 Brent Rubell for Adafruit
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,9 @@ mcp3008 class implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
-from .mcp3xxx import mcp3xxx
+from mcp3xxx import MCP3xxx
 
-class mcp3008(mcp3xxx):
+class MCP3008(MCP3xxx):
     """
     MCP3008 Pin Mapping.
     """
@@ -42,5 +42,7 @@ class mcp3008(mcp3xxx):
     P6 = 6
     P7 = 7
 
+    MAX_PIN = P7
+
     def __init__(self, spi_bus, cs):
-        super(mcp3xxx, self).__init__(spi_bus, cs)
+        super().__init__(spi_bus, cs)

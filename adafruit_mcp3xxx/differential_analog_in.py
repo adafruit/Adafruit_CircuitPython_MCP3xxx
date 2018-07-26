@@ -20,27 +20,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`AnalogIn.py`
+`differential_analogin.py`
 ================================================
 
-AnalogIn implementation for mcp3xxx ADCs.
+Differential AnalogIn implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
 
-class AnalogIn():
-    def __init__(self, mcp, pin):
+class DifferentialAnalogIn():
+
+    def __getitem__(self, key):
+        return self._channels[self._mcp.MCP3008_DIFF_PINS[key]]
+
+    def __init__(self, mcp, pin_1, pin_2):
         self._mcp = mcp
-        self._pin = pin
-        
+        self._channels = []
+        self._pin_1 = _pin_1
+        self._pin_2 = pin_2
+
     @property
     def value(self):
-        """calls read, returns int. value"""
-        return self._mcp.read(self._pin)
-
+        """calls read, returns differential value"""
+        diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
+        return self._mcp.read(self._pin, is_differential=True)
 
     @property
     def voltage(self):
-        """calls read, performs voltage calculation"""
-        v_in = self._mcp.read(self._pin)
+        """calls read, performs differential voltage calculation"""
+        diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
+        v_in = self._mcp.read(self._pin, is_differential=True)
         return (v_in * voltage) / 1023

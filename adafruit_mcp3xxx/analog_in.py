@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2018 ladyada for Adafruit
+# Copyright (c) 2018 Brent Rubell for Adafruit
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,34 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`Differential_AnalogIn.py`
+`analogio.py`
 ================================================
 
-Differential AnalogIn implementation for mcp3xxx ADCs.
+AnalogIn implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
 
-class Differential_AnalogIn():
-
-    def __getitem__(self, key):
-        return self._channels[self._mcp.MCP3008_DIFF_PINS[key]]
-
-    def __init__(self, mcp, pin_1, pin_2):
+class AnalogIn():
+    def __init__(self, mcp, pin):
         self._mcp = mcp
-        self._channels = []
-        self._pin_1 = _pin_1
-        self._pin_2 = pin_2
-        
+        self._pin = pin
+
     @property
     def value(self):
-        """calls read, returns differential value"""
-        diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
-        return self._mcp.read(self._pin, is_differential=True)
+        """calls read, returns int. value"""
+        return self._mcp.read(self._pin)
+
 
     @property
     def voltage(self):
-        """calls read, performs differential voltage calculation"""
-        diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
-        v_in = self._mcp.read(self._pin, is_differential=True)
+        """calls read, performs voltage calculation"""
+        v_in = self._mcp.read(self._pin)
         return (v_in * voltage) / 1023
