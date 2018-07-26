@@ -72,7 +72,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_mcp3xxx`
+`adafruit_mcp3xxx.py`
 ================================================
 
 CircuitPython Library for MCP3xxx ADCs with SPI

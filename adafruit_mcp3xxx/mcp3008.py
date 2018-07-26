@@ -27,7 +27,9 @@ mcp3008 class implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
-class mcp3008(object):
+from .mcp3xxx import mcp3xxx
+
+class mcp3008(mcp3xxx):
     """
     MCP3008 Pin Mapping.
     """
@@ -40,18 +42,5 @@ class mcp3008(object):
     P6 = 6
     P7 = 7
 
-    """
-    MCP3008 Differential Pin Mapping
-    """
-    MCP3008_DIFF_PINS = {
-        (0, 1) : P0,
-        (1, 0) : P1,
-        (2, 3) : P2,
-        (3, 2) : P3,
-        (4, 5) : P4,
-        (5, 4) : P5,
-        (6, 7) : P6,
-        (6, 6) : P7
-    }
     def __init__(self, spi_bus, cs):
         super(mcp3xxx, self).__init__(spi_bus, cs)
