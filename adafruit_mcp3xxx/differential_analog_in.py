@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2018 ladyada for Adafruit
+# Copyright (c) 2018 Brent Rubell for Adafruit Industries
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ Differential AnalogIn implementation for mcp3xxx ADCs.
 * Author(s): Brent Rubell
 """
 
-
 class DifferentialAnalogIn():
 
     def __getitem__(self, key):
@@ -35,19 +34,21 @@ class DifferentialAnalogIn():
 
     def __init__(self, mcp, pin_1, pin_2):
         self._mcp = mcp
-        self._channels = []
-        self._pin_1 = _pin_1
+        self._pin_1 = pin_1
         self._pin_2 = pin_2
+        self._channels = []
+
 
     @property
     def value(self):
         """calls read, returns differential value"""
         diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
-        return self._mcp.read(self._pin, is_differential=True)
+        print('Pin: ', diff_pin)
+        return self._mcp.read(diff_pin, is_differential=True)
 
     @property
     def voltage(self):
         """calls read, performs differential voltage calculation"""
         diff_pin = self._mcp.MCP3008_DIFF_PINS.get((self._pin_1, self._pin_2), "Difference pin not found.")
-        v_in = self._mcp.read(self._pin, is_differential=True)
-        return (v_in * voltage) / 1023
+        v_in = self._mcp.read(diff_pin, is_differential=True)
+        return (v_in * 3.3) / 1023
