@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2018 Brent Rubell for Adafruit
+# Copyright (c) 2018 Brent Rubell for Adafruit Industries
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,8 @@ AnalogIn for single-ended ADC readings.
 * Author(s): Brent Rubell
 """
 
-
 class AnalogIn():
+    """AnalogIn mock for single-ended adc reads."""
     def __init__(self, mcp, pin):
         self._mcp = mcp
         self._pin = pin
@@ -42,4 +42,4 @@ class AnalogIn():
     def voltage(self):
         """Returns the voltage from the ADC pin as a floating point value."""
         v_in = self._mcp.read(self._pin)
-        return (v_in * self._mcp._ref_voltage) / 1023
+        return (v_in * 3.3) / 1023

@@ -20,59 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_MCP3xxx`
-====================================================
-
-.. todo:: Describe what the module does
-
-* Author(s): ladyada
-
-Implementation Notes
---------------------
-
-**Hardware:**
-
-.. todo:: Add links to any specific hardware product page(s), or category page(s). Use unordered list & hyperlink rST
-   inline format: "* `Link Text <url>`_"
-
-**Software and Dependencies:**
-
-* Adafruit CircuitPython firmware for the supported boards:
-  https://github.com/adafruit/circuitpython/releases
-
-.. todo:: Uncomment or remove the Bus Device and/or the Register library dependencies based on the library's use of either.
-
-# * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
-# * Adafruit's Register library: https://github.com/adafruit/Adafruit_CircuitPython_Register
-"""
-
-# imports
-
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
-# The MIT License (MIT)
-#
-# Copyright (c) 2018 ladyada for Adafruit
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-"""
-`adafruit_mcp3xxx.py`
+`mcp3xxx.py`
 ================================================
 
 CircuitPython Library for MCP3xxx ADCs with SPI
@@ -107,9 +55,12 @@ _MCP30084_DIFF_READ = const(0b10)
 _MCP30084_SINGLE_READ = const(0b11)
 
 class MCP3xxx:
+    """
+    MCP3xxx Base Class
+    """
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         """
-        MCP3xxx Interface.
+        MCP3xxx SPI Interface.
 
         params:
             :param ~busdevice.SPIDevice spi_bus: SPI bus the ADC is connected to.
@@ -120,7 +71,7 @@ class MCP3xxx:
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
-    
+
     @property
     def reference_voltage(self):
         """Returns the MCP3xxx's reference voltage."""
@@ -133,7 +84,7 @@ class MCP3xxx:
             :param pin: individual or differential pin.
             :param bool is_differential: single-ended or differential read.
         """
-        if not (-1 < pin <= self.MAX_PIN):
+        if not -1 < pin <= self.MAX_PIN:
             raise ValueError('Pin must be a value between 0 and ', self.MAX_PIN)
         command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
         command |= pin << 3

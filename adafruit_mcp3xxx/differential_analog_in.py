@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`differential_analogin.py`
+`differential_analog_in.py`
 ======================================================
 Differential AnalogIn implementation for mcp3xxx ADCs.
 
@@ -28,7 +28,9 @@ Differential AnalogIn implementation for mcp3xxx ADCs.
 """
 
 class DifferentialAnalogIn():
-
+    """
+    DifferentialAnalogIn for Differential ADC reads.
+    """
     def __getitem__(self, key):
         return self._channels[self._pins[key]]
 
@@ -42,19 +44,19 @@ class DifferentialAnalogIn():
         elif self._mcp.MAX_PIN == 3:
             self._pins = self._mcp.MCP3004_DIFF_PINS
         else:
-            raise TypeError ('MCP object requires MAX_PIN')
+            raise TypeError('MCP object requires MAX_PIN')
 
 
     @property
     def value(self):
-        """calls read, returns differential value"""
+        """Returns the value of an ADC pin as an integer."""
         diff_pin = self._pins.get((self._pin_1, self._pin_2), "Difference pin not found.")
         print('Pin: ', diff_pin)
         return self._mcp.read(diff_pin, is_differential=True)
 
     @property
     def voltage(self):
-        """calls read, performs differential voltage calculation"""
+        """Returns the voltage from the ADC pin as a floating point value."""
         diff_pin = self._pins.get((self._pin_1, self._pin_2), "Difference pin not found.")
         v_in = self._mcp.read(diff_pin, is_differential=True)
         return (v_in * 3.3) / 1023
