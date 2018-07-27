@@ -13,7 +13,12 @@ Introduction
     :target: https://travis-ci.org/adafruit/adafruit_CircuitPython_MCP3xxx
     :alt: Build Status
 
-.. todo:: Describe what the library does.
+CircuitPython library for the MCP3xxx series of analog-to-digital converters.
+
+Currently supports:
+
+*  `MCP3008: 8-Channel 10-Bit ADC With SPI Interface <https://www.adafruit.com/product/856>`_
+
 
 Dependencies
 =============
@@ -29,7 +34,60 @@ This is easily achieved by downloading
 Usage Example
 =============
 
-.. todo:: Add a quick, simple example. It and other examples should live in the examples folder and be included in docs/examples.rst.
+
+Single Ended
+------------
+
+.. code-block:: python
+
+    import busio
+    import digitalio
+    import board
+    from adafruit_mcp3xxx.mcp3008 import MCP3008
+    from adafruit_mcp3xxx.analog_in import AnalogIn
+
+    # create the spi bus
+    spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+
+    # create the cs (chip select)
+    cs = digitalio.DigitalInOut(board.D5)
+
+    # create the mcp object from MCP3008 class
+    mcp = MCP3008(spi, cs)
+
+    # create an analog input channel on pin 0
+    chan = AnalogIn(mcp, MCP3008.pin_0)
+
+    print('Raw ADC Value: ', chan.value)
+    print('ADC Voltage: ' + str(chan.voltage) + 'V')
+
+
+Differential
+------------
+
+.. code-block:: python 
+
+    import busio
+    import digitalio
+    import board
+    from adafruit_mcp3xxx.mcp3008 import MCP3008
+    from adafruit_mcp3xxx.differential_analog_in import DifferentialAnalogIn
+
+    # create the spi bus
+    spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+
+    # create the cs (chip select)
+    cs = digitalio.DigitalInOut(board.D5)
+
+    # create the mcp object from MCP3008 class
+    mcp = MCP3008(spi, cs)
+
+    # create a differential analog input channel with pin 0 and pin 1
+    chan = DifferentialAnalogIn(mcp, MCP3008.pin_0, MCP3008.pin_1)
+
+    print('Differential ADC Value: ', chan.value)
+    print('Differential ADC Voltage: ' + str(chan.voltage) + 'V')
+
 
 Contributing
 ============
