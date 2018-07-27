@@ -61,3 +61,9 @@ class MCP3008(MCP3xxx):
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         super().__init__(spi_bus, cs, ref_voltage)
         self.ref_voltage = ref_voltage
+
+
+    @property
+    def reference_voltage(self):
+        """Returns the MCP3004's reference voltage."""
+        return self.ref_voltage

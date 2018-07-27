@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2018 Brent Rubell for Adafruit Industries
+# Copyright (c) 2018 Brent Rubell for Adafruit
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ AnalogIn for single-ended ADC readings.
 """
 
 class AnalogIn():
-    """AnalogIn mock for single-ended adc reads."""
+    """AnalogIn Mock Implementation for ADC Reads."""
     def __init__(self, mcp, pin):
         self._mcp = mcp
         self._pin = pin

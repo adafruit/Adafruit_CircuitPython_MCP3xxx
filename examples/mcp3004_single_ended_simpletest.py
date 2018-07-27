@@ -14,7 +14,7 @@ cs = digitalio.DigitalInOut(board.D5)
 mcp = MCP3004(spi, cs)
 
 # create a differential analog input channel;
-chan = AnalogIn(mcp, MCP3004.P2)
+chan = AnalogIn(mcp, MCP3004.pin_2)
 
 print('Raw ADC Value: ', chan.value)
 print('Voltage: ' + str(chan.voltage) + 'V')

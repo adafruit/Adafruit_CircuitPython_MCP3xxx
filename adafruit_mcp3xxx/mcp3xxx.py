@@ -69,11 +69,6 @@ class MCP3xxx:
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
 
-    @property
-    def reference_voltage(self):
-        """Returns the MCP3xxx's reference voltage."""
-        return self._ref_voltage
-
     def read(self, pin, is_differential=False):
         """SPI Interface for MCP3xxx-based ADCs reads.
 
