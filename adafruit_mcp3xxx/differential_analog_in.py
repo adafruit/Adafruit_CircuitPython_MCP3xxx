@@ -28,6 +28,7 @@ Differential ADC read for mcp3xxx ADCs.
 """
 
 class DifferentialAnalogIn():
+    """Differential ADC read."""
 
     def __getitem__(self, key):
         return self._channels[self._pins[key]]
