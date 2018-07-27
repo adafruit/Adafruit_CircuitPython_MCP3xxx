@@ -59,4 +59,4 @@ class DifferentialAnalogIn():
         """Returns the voltage from the ADC pin as a floating point value."""
         diff_pin = self._pins.get((self._pin_1, self._pin_2), "Difference pin not found.")
         v_in = self._mcp.read(diff_pin, is_differential=True)
-        return (v_in * 3.3) / 1023
+        return (v_in * self._mcp.ref_voltage) / 1023

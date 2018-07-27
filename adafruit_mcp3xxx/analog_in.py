@@ -42,4 +42,4 @@ class AnalogIn():
     def voltage(self):
         """Returns the voltage from the ADC pin as a floating point value."""
         v_in = self._mcp.read(self._pin)
-        return (v_in * 3.3) / 1023
+        return (v_in * self._mcp.ref_voltage) / 1023

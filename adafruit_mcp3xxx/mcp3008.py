@@ -34,30 +34,30 @@ class MCP3008(MCP3xxx):
     """
     MCP3008 Pin Mapping.
     """
-    P0 = 0
-    P1 = 1
-    P2 = 2
-    P3 = 3
-    P4 = 4
-    P5 = 5
-    P6 = 6
-    P7 = 7
-    MAX_PIN = P7
+    pin_0 = 0
+    pin_1 = 1
+    pin_2 = 2
+    pin_3 = 3
+    pin_4 = 4
+    pin_5 = 5
+    pin_6 = 6
+    pin_7 = 7
+    max_pin = pin_7
 
     """
     MCP3008 Diff. Channel Mapping.
     """
     MCP3008_DIFF_PINS = {
-        (0, 1) : P0,
-        (1, 0) : P1,
-        (2, 3) : P2,
-        (3, 2) : P3,
-        (4, 5) : P4,
-        (5, 4) : P5,
-        (6, 7) : P6,
-        (6, 6) : P7
+        (0, 1) : pin_0,
+        (1, 0) : pin_1,
+        (2, 3) : pin_2,
+        (3, 2) : pin_3,
+        (4, 5) : pin_4,
+        (5, 4) : pin_5,
+        (6, 7) : pin_6,
+        (6, 6) : pin_7
     }
 
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         super().__init__(spi_bus, cs, ref_voltage)
-        self._ref_voltage = ref_voltage
+        self.ref_voltage = ref_voltage

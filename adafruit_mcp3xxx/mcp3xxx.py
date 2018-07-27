@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`mcp3xxx.py`
+`adafruit_mcp3xxx.py`
 ================================================
 
 CircuitPython Library for MCP3xxx ADCs with SPI
@@ -51,22 +51,19 @@ from adafruit_bus_device.spi_device import SPIDevice
 
 # MCP3004/008 data transfer commands
 _MCP30084_OUT_BUFF = const(0x00)
-_MCP30084_DIFF_READ = const(0b10)
-_MCP30084_SINGLE_READ = const(0b11)
+_MCP30084_DIFF_READ = const(0x02)
+_MCP30084_SINGLE_READ = const(0x3)
 
 class MCP3xxx:
     """
-    MCP3xxx Base Class
+    MCP3xxx Interface.
+
+    params:
+        :param ~busdevice.SPIDevice spi_bus: SPI bus the ADC is connected to.
+        :param ~digitalio.DigitalInOut cs: Chip Select Pin.
+        :param float ref_voltage: Voltage into (Vin) the ADC.
     """
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
-        """
-        MCP3xxx SPI Interface.
-
-        params:
-            :param ~busdevice.SPIDevice spi_bus: SPI bus the ADC is connected to.
-            :param ~digitalio.DigitalInOut cs: Chip Select Pin.
-            :param float ref_voltage: Voltage into (Vin) the ADC.
-        """
         self._spi_device = SPIDevice(spi_bus, cs)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
@@ -84,8 +81,6 @@ class MCP3xxx:
             :param pin: individual or differential pin.
             :param bool is_differential: single-ended or differential read.
         """
-        if not -1 < pin <= self.MAX_PIN:
-            raise ValueError('Pin must be a value between 0 and ', self.MAX_PIN)
         command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
         command |= pin << 3
         self._out_buf[0] = command

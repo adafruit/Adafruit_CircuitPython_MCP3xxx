@@ -34,22 +34,22 @@ class MCP3004(MCP3xxx):
     """
     MCP3004 Pin Mapping.
     """
-    P0 = 0
-    P1 = 1
-    P2 = 2
-    P3 = 3
-    MAX_PIN = P3
+    pin_0 = 0
+    pin_1 = 1
+    pin_2 = 2
+    pin_3 = 3
+    max_pin = pin_3
 
     """
     MCP3004 Diff. Channel Mapping.
     """
     MCP3004_DIFF_PINS = {
-        (0, 1) : P0,
-        (1, 0) : P1,
-        (2, 3) : P2,
-        (3, 2) : P3
+        (0, 1) : pin_0,
+        (1, 0) : pin_1,
+        (2, 3) : pin_2,
+        (3, 2) : pin_3
     }
 
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         super().__init__(spi_bus, cs, ref_voltage)
-        self._ref_voltage = ref_voltage
+        self.ref_voltage = ref_voltage
