@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_mcp3xxx.py`
+`adafruit_mcp3xxx`
 ================================================
 
 CircuitPython Library for MCP3xxx ADCs with SPI
@@ -54,6 +54,7 @@ _MCP30084_OUT_BUFF = const(0x00)
 _MCP30084_DIFF_READ = const(0x02)
 _MCP30084_SINGLE_READ = const(0x3)
 
+
 class MCP3xxx:
     """
     MCP3xxx Interface.
@@ -68,6 +69,11 @@ class MCP3xxx:
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
+
+    @property
+    def reference_voltage(self):
+        """Returns the MCP3xxx's reference voltage."""
+        return self._ref_voltage
 
     def read(self, pin, is_differential=False):
         """SPI Interface for MCP3xxx-based ADCs reads.

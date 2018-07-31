@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`mcp3004.py`
+`mcp3004`
 ================================================
 MCP3004 4-channel, 10-bit, analog-to-digital
 converter instance.
@@ -30,24 +30,22 @@ converter instance.
 
 from .mcp3xxx import MCP3xxx
 
+# MCP3004 Pin Mapping
+P0 = 0
+P1 = 1
+P2 = 2
+P3 = 3
+
 class MCP3004(MCP3xxx):
-    """
-    MCP3004 Pin Mapping.
-    """
-    pin_0 = 0
-    pin_1 = 1
-    pin_2 = 2
-    pin_3 = 3
-    max_pin = pin_3
 
     """
     MCP3004 Diff. Channel Mapping.
     """
     MCP3004_DIFF_PINS = {
-        (0, 1) : pin_0,
-        (1, 0) : pin_1,
-        (2, 3) : pin_2,
-        (3, 2) : pin_3
+        (0, 1) : P0,
+        (1, 0) : P1,
+        (2, 3) : P2,
+        (3, 2) : P3
     }
 
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
@@ -55,7 +53,3 @@ class MCP3004(MCP3xxx):
         self.ref_voltage = ref_voltage
 
 
-    @property
-    def reference_voltage(self):
-        """Returns the MCP3004's reference voltage."""
-        return self.ref_voltage

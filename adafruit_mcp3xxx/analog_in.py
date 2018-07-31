@@ -20,26 +20,48 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`analog_in.py`
-================================================
-AnalogIn for single-ended ADC readings.
+`analog_in`
+==============================
+AnalogIn for single-ended and
+differential ADC readings.
 
 * Author(s): Brent Rubell
 """
 
 class AnalogIn():
     """AnalogIn Mock Implementation for ADC Reads."""
-    def __init__(self, mcp, pin):
+
+    def __getitem__(self, key):
+        return self._channels[self._pins[key]]
+
+    def __init__(self, mcp, positive_pin, negative_pin=None):
         self._mcp = mcp
-        self._pin = pin
+        self._positive_pin = positive_pin
+        self._negative_pin = negative_pin
+        if negative_pin is not None:
+            # set up the adc for differential reads
+            self._channels = []
+            if self._mcp.MCP3008_DIFF_PINS:
+                self._pins = self._mcp.MCP3008_DIFF_PINS
+            elif self._mcp.MCP3004_DIFF_PINS:
+                self._pins = self._mcp.MCP3004_DIFF_PINS
+            else:
+                raise TypeError('Diff. reads require MCP pins')
+            self._diff_pin = self._pins.get((self._positive_pin, self._negative_pin),
+                                            "Difference pin not found.")
 
     @property
     def value(self):
         """Returns the value of an ADC pin as an integer."""
-        return self._mcp.read(self._pin)
+        if self._negative_pin is not None:
+            return self._mcp.read(self._diff_pin, is_differential=True)
+        return self._mcp.read(self._positive_pin)
 
     @property
     def voltage(self):
         """Returns the voltage from the ADC pin as a floating point value."""
-        v_in = self._mcp.read(self._pin)
+        if self._negative_pin is not None:
+            v_in = v_in = self._mcp.read(self._diff_pin, is_differential=True)
+        else:
+            v_in = self._mcp.read(self._positive_pin)
         return (v_in * self._mcp.ref_voltage) / 1023
