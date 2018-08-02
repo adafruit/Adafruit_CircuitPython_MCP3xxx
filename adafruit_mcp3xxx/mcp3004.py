@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`mcp3004`
+`mcp3004.py`
 ================================================
 MCP3004 4-channel, 10-bit, analog-to-digital
 converter instance.
@@ -47,9 +47,3 @@ class MCP3004(MCP3xxx):
         (2, 3) : P2,
         (3, 2) : P3
     }
-
-    def __init__(self, spi_bus, cs, ref_voltage=3.3):
-        super().__init__(spi_bus, cs, ref_voltage)
-        self.ref_voltage = ref_voltage
-
-

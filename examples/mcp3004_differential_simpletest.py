@@ -1,8 +1,8 @@
 import busio
 import digitalio
 import board
-from adafruit_mcp3xxx.mcp3004 import MCP3004
-from adafruit_mcp3xxx.differential_analog_in import DifferentialAnalogIn
+import adafruit_mcp3xxx.mcp3004 as MCP
+from adafruit_mcp3xxx.analog_in import AnalogIn
 
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -10,11 +10,11 @@ spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 # create the cs (chip select)
 cs = digitalio.DigitalInOut(board.D5)
 
-# create the mcp object from MCP3004 class
-mcp = MCP3004(spi, cs)
+# create the mcp object
+mcp = MCP.MCP3004(spi, cs)
 
-# create a differential analog input channel;
-chan = DifferentialAnalogIn(mcp, MCP3004.pin_0, MCP3004.pin_1)
+# create a differential ADC channel between Pin 0 and Pin 1
+chan = AnalogIn(mcp, MCP.P0, MCP.P1)
 
-print('Raw ADC Value: ', chan.value)
-print('Voltage: ' + str(chan.voltage) + 'V')
+print('Differential ADC Value: ', chan.value)
+print('Differential ADC Voltage: ' + str(chan.voltage) + 'V')

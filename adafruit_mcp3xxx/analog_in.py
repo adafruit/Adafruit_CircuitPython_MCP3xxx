@@ -35,33 +35,32 @@ class AnalogIn():
         return self._channels[self._pins[key]]
 
     def __init__(self, mcp, positive_pin, negative_pin=None):
+        """AnalogIn
+
+        :param mcp: The mcp object.
+        :param ~digitalio.DigitalInOut positive_pin: Required pin for single-ended.
+        :param ~digitalio.DigitalInOut negative_pin: Optional pin for differential reads.
+        """
         self._mcp = mcp
-        self._positive_pin = positive_pin
+        self._pin_setting = positive_pin
         self._negative_pin = negative_pin
+        self.is_differential = False
         if negative_pin is not None:
-            # set up the adc for differential reads
+            self.is_differential = True
             self._channels = []
-            if self._mcp.MCP3008_DIFF_PINS:
+            try:
                 self._pins = self._mcp.MCP3008_DIFF_PINS
-            elif self._mcp.MCP3004_DIFF_PINS:
+            except AttributeError:
                 self._pins = self._mcp.MCP3004_DIFF_PINS
-            else:
-                raise TypeError('Diff. reads require MCP pins')
-            self._diff_pin = self._pins.get((self._positive_pin, self._negative_pin),
-                                            "Difference pin not found.")
+            self._pin_setting = self._pins.get((self._pin_setting, self._negative_pin),
+                                               "Difference pin not found.")
 
     @property
     def value(self):
         """Returns the value of an ADC pin as an integer."""
-        if self._negative_pin is not None:
-            return self._mcp.read(self._diff_pin, is_differential=True)
-        return self._mcp.read(self._positive_pin)
+        return self._mcp.read(self._pin_setting, is_differential=self.is_differential) << 6
 
     @property
     def voltage(self):
         """Returns the voltage from the ADC pin as a floating point value."""
-        if self._negative_pin is not None:
-            v_in = v_in = self._mcp.read(self._diff_pin, is_differential=True)
-        else:
-            v_in = self._mcp.read(self._positive_pin)
-        return (v_in * self._mcp.ref_voltage) / 1023
+        return (self.value * self._mcp.reference_voltage) / 1023
