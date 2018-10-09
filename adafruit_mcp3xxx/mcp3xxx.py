@@ -88,8 +88,9 @@ class MCP3xxx:
         self._out_buf[1] = _MCP30084_OUT_BUFF
         self._out_buf[2] = _MCP30084_OUT_BUFF
         with self._spi_device as spi:
+            #pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf, out_start=0,
-                               out_end=len(self._out_buf), in_start=0, in_end=len(self._in_buf)) # pylint: disable=no-member
+                               out_end=len(self._out_buf), in_start=0, in_end=len(self._in_buf))
         result = (self._in_buf[0] & 0x01) << 9
         result |= self._in_buf[1] << 1
         result |= self._in_buf[2] >> 7
