@@ -63,4 +63,4 @@ class AnalogIn():
     @property
     def voltage(self):
         """Returns the voltage from the ADC pin as a floating point value."""
-        return (self.value * self._mcp.reference_voltage) / 1023
+        return (self.value * self._mcp.reference_voltage) / 65535
