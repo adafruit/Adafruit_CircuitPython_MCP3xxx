@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2018 ladyada for Adafruit
+# Copyright (c) 2018 Brent Rubell for Adafruit
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,33 +20,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_MCP3xxx`
-====================================================
+`mcp3008.py`
+=============================================
+MCP3008 8-channel, 10-bit, analog-to-digital
+converter instance.
 
-.. todo:: Describe what the module does
-
-* Author(s): ladyada
-
-Implementation Notes
---------------------
-
-**Hardware:**
-
-.. todo:: Add links to any specific hardware product page(s), or category page(s). Use unordered list & hyperlink rST
-   inline format: "* `Link Text <url>`_"
-
-**Software and Dependencies:**
-
-* Adafruit CircuitPython firmware for the supported boards:
-  https://github.com/adafruit/circuitpython/releases
-  
-.. todo:: Uncomment or remove the Bus Device and/or the Register library dependencies based on the library's use of either.
-
-# * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
-# * Adafruit's Register library: https://github.com/adafruit/Adafruit_CircuitPython_Register
+* Author(s): Brent Rubell
 """
 
-# imports
+from .mcp3xxx import MCP3xxx
 
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
+# MCP3008 Pin Mapping
+P0 = 0
+P1 = 1
+P2 = 2
+P3 = 3
+P4 = 4
+P5 = 5
+P6 = 6
+P7 = 7
+
+class MCP3008(MCP3xxx):
+
+    """
+    MCP3008 Diff. Channel Mapping.
+    """
+    MCP3008_DIFF_PINS = {
+        (0, 1) : P0,
+        (1, 0) : P1,
+        (2, 3) : P2,
+        (3, 2) : P3,
+        (4, 5) : P4,
+        (5, 4) : P5,
+        (6, 7) : P6,
+        (6, 6) : P7
+    }
