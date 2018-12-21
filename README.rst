@@ -9,8 +9,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MCP3xxx.svg?branch=master
-    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MCP3xxx
+.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_MCP3xxx.svg?branch=master
+    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_MCP3xxx
     :alt: Build Status
 
 CircuitPython library for the MCP3xxx series of analog-to-digital converters.
