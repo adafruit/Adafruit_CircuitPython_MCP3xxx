@@ -43,7 +43,15 @@ P7 = 7
 class MCP3008(MCP3xxx):
 
     """
-    MCP3008 Diff. Channel Mapping.
+    MCP3008 Differential channel mapping.
+        - 0: CH0 = IN+, CH1 = IN-
+        - 1: CH1 = IN+, CH0 = IN-
+        - 2: CH2 = IN+, CH3 = IN-
+        - 3: CH3 = IN+, CH2 = IN-
+        - 4: CH4 = IN+, CH5 = IN-
+        - 5: CH5 = IN+, CH4 = IN-
+        - 6: CH6 = IN+, CH7 = IN-
+        - 7: CH7 = IN+, CH6 = IN-
     """
     MCP3008_DIFF_PINS = {
         (0, 1) : P0,
