@@ -39,7 +39,11 @@ P3 = 3
 class MCP3004(MCP3xxx):
 
     """
-    MCP3004 Diff. Channel Mapping.
+    MCP3004 Differential channel mapping.
+        - 0: CH0 = IN+, CH1 = IN-
+        - 1: CH1 = IN+, CH0 = IN-
+        - 2: CH2 = IN+, CH3 = IN-
+        - 3: CH3 = IN+, CH2 = IN-
     """
     MCP3004_DIFF_PINS = {
         (0, 1) : P0,
