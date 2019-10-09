@@ -28,15 +28,18 @@ differential ADC readings.
 * Author(s): Brent Rubell
 """
 
+from .mcp3xxx import MCP3xxx
+
 class AnalogIn():
     """AnalogIn Mock Implementation for ADC Reads.
 
-    :param ~mcp3004.MCP3004,~mcp3008.MCP3008 mcp: The mcp object.
-    :param ~digitalio.DigitalInOut positive_pin: Required pin for single-ended.
-    :param ~mcp3xxx.MCP3xxx.DIFF_PINS negative_pin: Optional pin for differential reads.
-
+    :param ~mcp3002.MCP3002,~mcp3004.MCP3004,~mcp3008.MCP3008 mcp: The mcp object.
+    :param int positive_pin: Required pin for single-ended.
+    :param int negative_pin: Optional pin for differential reads.
     """
     def __init__(self, mcp, positive_pin, negative_pin=None):
+        if not isinstance(mcp, MCP3xxx):
+            raise ValueError("mcp object not of instance type MCP3xxx or its siblings.")
         self._mcp = mcp
         self._pin_setting = positive_pin
         self._negative_pin = negative_pin
@@ -44,12 +47,10 @@ class AnalogIn():
         if negative_pin is not None:
             self.is_differential = True
             self._channels = []
-            try:
-                self._pins = self._mcp.MCP3008_DIFF_PINS
-            except AttributeError:
-                self._pins = self._mcp.MCP3004_DIFF_PINS
-            self._pin_setting = self._pins.get((self._pin_setting, self._negative_pin),
-                                               "Difference pin not found.")
+            self._pins = self._mcp.DIFF_PINS
+            self._pin_setting = self._pins.get((self._pin_setting, self._negative_pin), None)
+            if self._pin_setting is None:
+                raise ValueError("Differential pin mapping not defined. Please read the docs.")
 
     def __getitem__(self, key):
         return self._channels[self._pins[key]]

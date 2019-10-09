@@ -57,12 +57,13 @@ _MCP30084_SINGLE_READ = const(0x3)
 
 class MCP3xxx:
     """
-    MCP3xxx Interface.
+    MCP3xxx Interface. A base class meant for instantiating
+    :class:`~adafruit_mcp3xxx.mcp3008.MCP3008`, :class:`~adafruit_mcp3xxx.mcp3004.MCP3004`,
+    or :class:`~adafruit_mcp3xxx.mcp3002.MCP3002` child classes.
 
     :param ~adafruit_bus_device.spi_device.SPIDevice spi_bus: SPI bus the ADC is connected to.
     :param ~digitalio.DigitalInOut cs: Chip Select Pin.
     :param float ref_voltage: Voltage into (Vin) the ADC.
-
     """
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         self._spi_device = SPIDevice(spi_bus, cs)
@@ -70,7 +71,7 @@ class MCP3xxx:
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
 
-    DIFF_PINS = {}
+    DIFF_PINS = {}#: Differential channel mapping. This is overiden by child classes appropriately.
 
     @property
     def reference_voltage(self):
@@ -82,7 +83,6 @@ class MCP3xxx:
 
         :param int pin: individual or differential pin.
         :param bool is_differential: single-ended or differential read.
-
         """
         command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
         command |= pin << 3

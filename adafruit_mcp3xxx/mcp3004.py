@@ -37,7 +37,6 @@ P2 = 2
 P3 = 3
 
 class MCP3004(MCP3xxx):
-
     """
     MCP3004 Differential channel mapping.
         - 0: CH0 = IN+, CH1 = IN-

@@ -41,7 +41,6 @@ P6 = 6
 P7 = 7
 
 class MCP3008(MCP3xxx):
-
     """
     MCP3008 Differential channel mapping.
         - 0: CH0 = IN+, CH1 = IN-
