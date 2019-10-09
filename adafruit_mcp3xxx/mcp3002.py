@@ -28,14 +28,21 @@ converter instance.
 * Author(s): Brent Rubell
 """
 
+from micropython import const
 from .mcp3xxx import MCP3xxx
+
+
+# MCP3002 data transfer commands
+_MCP3002_OUT_BUFF = const(0x00)
+_MCP3002_DIFF_READ = const(0x00)
+_MCP3002_SINGLE_READ = const(0x02)
+
 
 # MCP3002 Pin Mapping
 P0 = 0
 P1 = 1
 
 class MCP3002(MCP3xxx):
-
     """
     MCP3002 Differential channel mapping.
         - 0: CH0 = IN+, CH1 = IN-
@@ -45,3 +52,24 @@ class MCP3002(MCP3xxx):
         (0, 1) : P0,
         (1, 0) : P1
     }
+
+    def read(self, pin, is_differential=False):
+        """SPI Interface for MCP3xxx-based ADCs reads.
+
+        :param int pin: individual or differential pin.
+        :param bool is_differential: single-ended or differential read.
+
+        """
+        command = (_MCP3002_DIFF_READ if is_differential else _MCP3002_SINGLE_READ) << 6
+        command |= pin << 3
+        self._out_buf[0] = command
+        self._out_buf[1] = _MCP3002_OUT_BUFF
+        self._out_buf[2] = _MCP3002_OUT_BUFF
+        with self._spi_device as spi:
+            #pylint: disable=no-member
+            spi.write_readinto(self._out_buf, self._in_buf, out_start=0,
+                               out_end=len(self._out_buf), in_start=0, in_end=len(self._in_buf))
+        result = (self._in_buf[0] & 0x01) << 9
+        result |= self._in_buf[1] << 1
+        result |= self._in_buf[2] >> 7
+        return result
