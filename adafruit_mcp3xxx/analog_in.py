@@ -32,8 +32,8 @@ class AnalogIn():
     """AnalogIn Mock Implementation for ADC Reads.
 
     :param ~mcp3004.MCP3004,~mcp3008.MCP3008 mcp: The mcp object.
-    :param ~digitalio.DigitalInOut positive_pin: Required pin for single-ended.
-    :param ~digitalio.DigitalInOut negative_pin: Optional pin for differential reads.
+    :param int positive_pin: Required pin for single-ended.
+    :param int negative_pin: Optional pin for differential reads.
 
     """
     def __init__(self, mcp, positive_pin, negative_pin=None):
