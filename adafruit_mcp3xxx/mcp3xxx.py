@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_mcp3xxx.py`
-================================================
+:py:class:`~adafruit_mcp3xxx.adafruit_mcp3xxx.MCP3xxx`
+============================================================
 
 CircuitPython Library for MCP3xxx ADCs with SPI
 
@@ -59,10 +59,10 @@ class MCP3xxx:
     """
     MCP3xxx Interface.
 
-    params:
-        :param ~busdevice.SPIDevice spi_bus: SPI bus the ADC is connected to.
-        :param ~digitalio.DigitalInOut cs: Chip Select Pin.
-        :param float ref_voltage: Voltage into (Vin) the ADC.
+    :param ~adafruit_bus_device.spi_device.SPIDevice spi_bus: SPI bus the ADC is connected to.
+    :param ~digitalio.DigitalInOut cs: Chip Select Pin.
+    :param float ref_voltage: Voltage into (Vin) the ADC.
+
     """
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         self._spi_device = SPIDevice(spi_bus, cs)
@@ -78,9 +78,9 @@ class MCP3xxx:
     def read(self, pin, is_differential=False):
         """SPI Interface for MCP3xxx-based ADCs reads.
 
-        params:
-            :param pin: individual or differential pin.
-            :param bool is_differential: single-ended or differential read.
+        :param int pin: individual or differential pin.
+        :param bool is_differential: single-ended or differential read.
+
         """
         command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
         command |= pin << 3

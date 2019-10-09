@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`mcp3008.py`
-=============================================
+:py:class:`~adafruit_mcp3xxx.mcp3008.MCP3008`
+=============================================================
 MCP3008 8-channel, 10-bit, analog-to-digital
 converter instance.
 
