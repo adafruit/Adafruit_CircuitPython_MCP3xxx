@@ -48,18 +48,12 @@ class MCP3002(MCP3xxx):
         - 0: CH0 = IN+, CH1 = IN-
         - 1: CH1 = IN+, CH0 = IN-
     """
-    MCP3002_DIFF_PINS = {
+    DIFF_PINS = {
         (0, 1) : P0,
         (1, 0) : P1
     }
 
     def read(self, pin, is_differential=False):
-        """SPI Interface for MCP3xxx-based ADCs reads.
-
-        :param int pin: individual or differential pin.
-        :param bool is_differential: single-ended or differential read.
-
-        """
         command = (_MCP3002_DIFF_READ if is_differential else _MCP3002_SINGLE_READ) << 6
         command |= pin << 3
         self._out_buf[0] = command

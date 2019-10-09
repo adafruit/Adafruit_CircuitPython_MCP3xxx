@@ -53,7 +53,7 @@ class MCP3008(MCP3xxx):
         - 6: CH6 = IN+, CH7 = IN-
         - 7: CH7 = IN+, CH6 = IN-
     """
-    MCP3008_DIFF_PINS = {
+    DIFF_PINS = {
         (0, 1) : P0,
         (1, 0) : P1,
         (2, 3) : P2,

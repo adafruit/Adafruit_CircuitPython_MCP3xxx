@@ -45,7 +45,7 @@ class MCP3004(MCP3xxx):
         - 2: CH2 = IN+, CH3 = IN-
         - 3: CH3 = IN+, CH2 = IN-
     """
-    MCP3004_DIFF_PINS = {
+    DIFF_PINS = {
         (0, 1) : P0,
         (1, 0) : P1,
         (2, 3) : P2,

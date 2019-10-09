@@ -70,6 +70,8 @@ class MCP3xxx:
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
 
+    DIFF_PINS = {}
+
     @property
     def reference_voltage(self):
         """Returns the MCP3xxx's reference voltage."""
