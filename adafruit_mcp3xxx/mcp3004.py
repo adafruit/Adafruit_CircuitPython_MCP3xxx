@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`mcp3004.py`
+:py:class:`~adafruit_mcp3xxx.mcp3004.MCP3004`
 ================================================
 MCP3004 4-channel, 10-bit, analog-to-digital
 converter instance.

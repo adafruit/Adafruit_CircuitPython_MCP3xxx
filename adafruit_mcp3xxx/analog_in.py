@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`analog_in`
-==============================
+:py:class:`~adafruit_mcp3xxx.analog_in.AnalogIn`
+======================================================
 AnalogIn for single-ended and
 differential ADC readings.
 
@@ -29,18 +29,14 @@ differential ADC readings.
 """
 
 class AnalogIn():
-    """AnalogIn Mock Implementation for ADC Reads."""
+    """AnalogIn Mock Implementation for ADC Reads.
 
-    def __getitem__(self, key):
-        return self._channels[self._pins[key]]
+    :param ~mcp3004.MCP3004,~mcp3008.MCP3008 mcp: The mcp object.
+    :param int positive_pin: Required pin for single-ended.
+    :param int negative_pin: Optional pin for differential reads.
 
+    """
     def __init__(self, mcp, positive_pin, negative_pin=None):
-        """AnalogIn
-
-        :param mcp: The mcp object.
-        :param ~digitalio.DigitalInOut positive_pin: Required pin for single-ended.
-        :param ~digitalio.DigitalInOut negative_pin: Optional pin for differential reads.
-        """
         self._mcp = mcp
         self._pin_setting = positive_pin
         self._negative_pin = negative_pin
@@ -54,6 +50,9 @@ class AnalogIn():
                 self._pins = self._mcp.MCP3004_DIFF_PINS
             self._pin_setting = self._pins.get((self._pin_setting, self._negative_pin),
                                                "Difference pin not found.")
+
+    def __getitem__(self, key):
+        return self._channels[self._pins[key]]
 
     @property
     def value(self):
