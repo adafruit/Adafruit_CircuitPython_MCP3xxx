@@ -38,8 +38,8 @@ class AnalogIn():
     :param int negative_pin: Optional pin for differential reads.
     """
     def __init__(self, mcp, positive_pin, negative_pin=None):
-        if not isinstance(mcp, MCP3xxx):
-            raise ValueError("mcp object not of instance type MCP3xxx or its siblings.")
+        if not issubclass(mcp, MCP3xxx):
+            raise ValueError("mcp object is not a sibling of MCP3xxx class.")
         self._mcp = mcp
         self._pin_setting = positive_pin
         self._negative_pin = negative_pin
