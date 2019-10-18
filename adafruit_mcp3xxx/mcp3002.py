@@ -28,15 +28,7 @@ converter instance.
 
 * Author(s): Brent Rubell, Brendan Doherty
 """
-
-from micropython import const
 from .mcp3xxx import MCP3xxx
-
-
-# MCP3002 data transfer commands
-_MCP3002_OUT_BUFF = const(0x00)
-_MCP3002_DIFF_READ = const(0x00)
-_MCP3002_SINGLE_READ = const(0x02)
 
 # MCP3002 Pin Mapping
 P0 = 0
@@ -45,12 +37,8 @@ P1 = 1
 class MCP3002(MCP3xxx):
     """
     MCP3002 Differential channel mapping.
-        Use the following predefined options as the third parameter to
-        :class:`~adafruit_mcp3xxx.analog_in.AnalogIn`'s contructor to obtain the differential
-        value of the option's corresponding pair of channels. See `examples/` for usage.
-
-        - ``P0`` = Channel 0 - Channel 1
-        - ``P1`` = Channel 1 - Channel 0
+        - 0: CH0 = IN+, CH1 = IN-
+        - 1: CH1 = IN+, CH0 = IN-
     """
     DIFF_PINS = {
         (0, 1) : P0,
@@ -58,11 +46,7 @@ class MCP3002(MCP3xxx):
     }
 
     def read(self, pin, is_differential=False):
-        command = (_MCP3002_DIFF_READ if is_differential else _MCP3002_SINGLE_READ) << 6
-        command |= pin << 2
-        self._out_buf[0] = command
-        self._out_buf[1] = _MCP3002_OUT_BUFF
-        self._out_buf[2] = _MCP3002_OUT_BUFF
+        self._out_buf[0] = (not is_differential << 6) | (pin << 5)
         with self._spi_device as spi:
             #pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf, out_start=0,

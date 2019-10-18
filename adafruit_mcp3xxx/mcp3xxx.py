@@ -52,7 +52,7 @@ from adafruit_bus_device.spi_device import SPIDevice
 # MCP3004/008 data transfer commands
 _MCP30084_OUT_BUFF = const(0x00)
 _MCP30084_DIFF_READ = const(0x02)
-_MCP30084_SINGLE_READ = const(0x3)
+_MCP30084_SINGLE_READ = const(0x03)
 
 
 class MCP3xxx:
@@ -70,8 +70,6 @@ class MCP3xxx:
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
-
-    DIFF_PINS = {}#: Differential channel mapping. This is overiden by child classes appropriately.
 
     @property
     def reference_voltage(self):

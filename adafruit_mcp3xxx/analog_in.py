@@ -42,18 +42,11 @@ class AnalogIn():
             raise ValueError("mcp object is not a sibling of MCP3xxx class.")
         self._mcp = mcp
         self._pin_setting = positive_pin
-        self._negative_pin = negative_pin
-        self.is_differential = False
-        if negative_pin is not None:
-            self.is_differential = True
-            self._channels = []
-            self._pins = self._mcp.DIFF_PINS
-            self._pin_setting = self._pins.get((self._pin_setting, self._negative_pin), None)
-            if self._pin_setting is None:
-                raise ValueError("Differential pin mapping not defined. Please read the docs.")
-
-    def __getitem__(self, key):
-        return self._channels[self._pins[key]]
+        self.is_differential = negative_pin is not None
+        if self.is_differential:
+            self._pin_setting = self._mcp.DIFF_PINS.get((self._pin_setting, negative_pin), None)
+        if self._pin_setting is None:
+            raise ValueError("Differential pin mapping not defined. Please read the docs.")
 
     @property
     def value(self):
