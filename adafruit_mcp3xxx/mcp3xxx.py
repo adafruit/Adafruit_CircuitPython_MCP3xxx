@@ -74,11 +74,8 @@ class MCP3xxx:
         :param int pin: individual or differential pin.
         :param bool is_differential: single-ended or differential read.
         """
-        self._out_buf[0] = 0x01
         self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
-        print([bin(x) for x in self._out_buf])
         with self._spi_device as spi:
             #pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf)
-        print([bin(x) for x in self._in_buf])
         return ((self._in_buf[1] & 0x03) << 8) | self._in_buf[2]

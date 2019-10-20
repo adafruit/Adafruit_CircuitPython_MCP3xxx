@@ -62,3 +62,7 @@ class MCP3008(MCP3xxx):
         (6, 7) : P6,
         (7, 6) : P7
     }
+
+    def __init__(self, spi_bus, cs, ref_voltage=3.3):
+        super(MCP3008, self).__init__(spi_bus, cs, ref_voltage=ref_voltage)
+        self._out_buf[0] = 0x01
