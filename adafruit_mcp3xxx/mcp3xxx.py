@@ -45,15 +45,7 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
-
-from micropython import const
 from adafruit_bus_device.spi_device import SPIDevice
-
-# MCP3004/008 data transfer commands
-_MCP30084_OUT_BUFF = const(0x00)
-_MCP30084_DIFF_READ = const(0x02)
-_MCP30084_SINGLE_READ = const(0x03)
-
 
 class MCP3xxx:
     """
@@ -82,16 +74,11 @@ class MCP3xxx:
         :param int pin: individual or differential pin.
         :param bool is_differential: single-ended or differential read.
         """
-        command = (_MCP30084_DIFF_READ if is_differential else _MCP30084_SINGLE_READ) << 6
-        command |= pin << 3
-        self._out_buf[0] = command
-        self._out_buf[1] = _MCP30084_OUT_BUFF
-        self._out_buf[2] = _MCP30084_OUT_BUFF
+        self._out_buf[0] = 0x01
+        self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
+        print([bin(x) for x in self._out_buf])
         with self._spi_device as spi:
             #pylint: disable=no-member
-            spi.write_readinto(self._out_buf, self._in_buf, out_start=0,
-                               out_end=len(self._out_buf), in_start=0, in_end=len(self._in_buf))
-        result = (self._in_buf[0] & 0x01) << 9
-        result |= self._in_buf[1] << 1
-        result |= self._in_buf[2] >> 7
-        return result
+            spi.write_readinto(self._out_buf, self._in_buf)
+        print([bin(x) for x in self._in_buf])
+        return ((self._in_buf[1] & 0x03) << 8) | self._in_buf[2]

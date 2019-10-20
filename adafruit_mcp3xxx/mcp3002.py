@@ -46,12 +46,10 @@ class MCP3002(MCP3xxx):
     }
 
     def read(self, pin, is_differential=False):
-        self._out_buf[0] = (not is_differential << 6) | (pin << 5)
+        self._out_buf[0] = 0x40 | ((not is_differential) << 5) | (pin << 4)
+        # print([bin(x) for x in self._out_buf])
         with self._spi_device as spi:
             #pylint: disable=no-member
-            spi.write_readinto(self._out_buf, self._in_buf, out_start=0,
-                               out_end=len(self._out_buf), in_start=0, in_end=len(self._in_buf))
-        result = (self._in_buf[0] & 0x01) << 9
-        result |= self._in_buf[1] << 1
-        result |= self._in_buf[2] >> 7
-        return result
+            spi.write_readinto(self._out_buf, self._in_buf, out_end=2, in_end=2)
+        # print([bin(x) for x in self._in_buf])
+        return ((self._in_buf[0] & 0x03) << 8) | self._in_buf[1]
