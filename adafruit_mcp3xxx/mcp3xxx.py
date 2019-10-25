@@ -41,7 +41,7 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
-.. note:: The ADC chips' input pins (AKA "channels" in the datasheets) are aliased in this library
+.. note:: The ADC chips' input pins (AKA "channels") are aliased in this library
     as integer variables whose names start with "P" (eg ``MCP3008.P0`` is channel 0 on the MCP3008
     chip). Each module that contains a driver class for a particular ADC chip has these aliases
     predefined accordingly. This is done for code readability and prevention of erroneous SPI
@@ -49,9 +49,9 @@ Implementation Notes
 
 .. important::
     The differential reads (comparisons done by the ADC chip) are limited to certain pairs of
-    channels. These predefined pairs are referenced in this documentation as differential mappings.
-    Please refer to the driver class of your ADC chip (`MCP3008`_, `MCP3004`_, `MCP3002`_) for a
-    list of available differential mappings.
+    channels. These predefined pairs are referenced in this documentation as differential
+    channel mappings. Please refer to the driver class of your ADC chip (`MCP3008`_,
+    `MCP3004`_, `MCP3002`_) for a list of available differential channel mappings.
 """
 
 __version__ = "0.0.0-auto.0"
@@ -89,7 +89,7 @@ class MCP3xxx:
         .. note:: This library offers a helper class called `AnalogIn`_ for both single-ended
             and differential reads. If you opt to not implement `AnalogIn`_ during differential
             reads, then the ``pin`` parameter should be the first of the two pins associated with
-            the desired differential mapping.
+            the desired differential channel mapping.
         """
         self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
         with self._spi_device as spi:

@@ -35,7 +35,7 @@ datasheet.
 
 from .mcp3xxx import MCP3xxx
 
-# # MCP3008 Pin Mapping
+# MCP3008 Pin Mapping
 P0 = 0
 P1 = 1
 P2 = 2
