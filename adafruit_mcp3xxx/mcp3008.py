@@ -30,7 +30,7 @@ converter instance.
 
 from .mcp3xxx import MCP3xxx
 
-# MCP3008 Pin Mapping
+# # MCP3008 Pin Mapping
 P0 = 0
 P1 = 1
 P2 = 2
@@ -42,15 +42,19 @@ P7 = 7
 
 class MCP3008(MCP3xxx):
     """
-    MCP3008 Differential channel mapping.
-        - 0: CH0 = IN+, CH1 = IN-
-        - 1: CH1 = IN+, CH0 = IN-
-        - 2: CH2 = IN+, CH3 = IN-
-        - 3: CH3 = IN+, CH2 = IN-
-        - 4: CH4 = IN+, CH5 = IN-
-        - 5: CH5 = IN+, CH4 = IN-
-        - 6: CH6 = IN+, CH7 = IN-
-        - 7: CH7 = IN+, CH6 = IN-
+    MCP3008 Differential channel mapping. The following list of available differential readings
+    takes the form ``(positive_pin, negative_pin) = channel A - channel B``.
+
+    - (P0, P1) = CH0 - CH1
+    - (P1, P0) = CH1 - CH0
+    - (P2, P3) = CH2 - CH3
+    - (P3, P2) = CH3 - CH2
+    - (P4, P5) = CH4 - CH5
+    - (P5, P4) = CH5 - CH4
+    - (P6, P7) = CH6 - CH7
+    - (P7, P6) = CH7 - CH6
+
+    See also the notes in the `AnalogIn <api.html#id3>`_ class.
     """
     DIFF_PINS = {
         (0, 1) : P0,
