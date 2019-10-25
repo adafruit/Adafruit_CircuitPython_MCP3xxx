@@ -42,7 +42,7 @@ P1 = 1
 class MCP3002(MCP3xxx):
     """
     MCP3002 Differential channel mapping. The following list of available differential readings
-    takes the form ``(positive_pin, negative_pin) = channel A - channel B``.
+    takes the form ``(positive_pin, negative_pin) = (channel A) - (channel B)``.
 
     - (P0, P1) = CH0 - CH1
     - (P1, P0) = CH1 - CH0
