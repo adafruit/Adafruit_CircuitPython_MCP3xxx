@@ -26,6 +26,11 @@ MCP3008 8-channel, 10-bit, analog-to-digital
 converter instance.
 
 * Author(s): Brent Rubell
+
+For proper wiring, please refer to the `Package Types diagram
+<https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf#page=1>`_ and `Pin Description section
+<https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf#G1.1035093>`_ of the MCP3004/MCP3008
+datasheet.
 """
 
 from .mcp3xxx import MCP3xxx
@@ -54,7 +59,7 @@ class MCP3008(MCP3xxx):
     - (P6, P7) = CH6 - CH7
     - (P7, P6) = CH7 - CH6
 
-    See also the notes in the `AnalogIn <api.html#id3>`_ class.
+    See also the warning in the `AnalogIn`_ class API.
     """
     DIFF_PINS = {
         (0, 1) : P0,

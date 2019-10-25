@@ -40,6 +40,18 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
+
+.. note:: The ADC chips' input pins (AKA "channels" in the datasheets) are aliased in this library
+    as integer variables whose names start with "P" (eg ``MCP3008.P0`` is channel 0 on the MCP3008
+    chip). Each module that contains a driver class for a particular ADC chip has these aliases
+    predefined accordingly. This is done for code readability and prevention of erroneous SPI
+    commands.
+
+.. important::
+    The differential reads (comparisons done by the ADC chip) are limited to certain pairs of
+    channels. These predefined pairs are referenced in this documentation as differential mappings.
+    Please refer to the driver class of your ADC chip (`MCP3008`_, `MCP3004`_, `MCP3002`_) for a
+    list of available differential mappings.
 """
 
 __version__ = "0.0.0-auto.0"
@@ -49,9 +61,8 @@ from adafruit_bus_device.spi_device import SPIDevice
 
 class MCP3xxx:
     """
-    MCP3xxx Interface. A base class meant for instantiating
-    :class:`~adafruit_mcp3xxx.mcp3008.MCP3008`, :class:`~adafruit_mcp3xxx.mcp3004.MCP3004`,
-    or :class:`~adafruit_mcp3xxx.mcp3002.MCP3002` child classes.
+    This abstract base class is meant to be inherited by `MCP3008`_, `MCP3004`_,
+    or `MCP3002`_ child classes.
 
     :param ~adafruit_bus_device.spi_device.SPIDevice spi_bus: SPI bus the ADC is connected to.
     :param ~digitalio.DigitalInOut cs: Chip Select Pin.
@@ -65,14 +76,20 @@ class MCP3xxx:
 
     @property
     def reference_voltage(self):
-        """Returns the MCP3xxx's reference voltage."""
+        """Returns the MCP3xxx's reference voltage. (read-only)"""
         return self._ref_voltage
 
     def read(self, pin, is_differential=False):
-        """SPI Interface for MCP3xxx-based ADCs reads.
+        """SPI Interface for MCP3xxx-based ADCs reads. Due to 10-bit accuracy, the returned
+        value ranges [0, 1023].
 
         :param int pin: individual or differential pin.
         :param bool is_differential: single-ended or differential read.
+
+        .. note:: This library offers a helper class called `AnalogIn`_ for both single-ended
+            and differential reads. If you opt to not implement `AnalogIn`_ during differential
+            reads, then the ``pin`` parameter should be the first of the two pins associated with
+            the desired differential mapping.
         """
         self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
         with self._spi_device as spi:

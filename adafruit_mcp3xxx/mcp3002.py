@@ -27,6 +27,11 @@ MCP3002 2-channel, 10-bit, analog-to-digital
 converter instance.
 
 * Author(s): Brent Rubell, Brendan Doherty
+
+For proper wiring, please refer to `Package Type diagram
+<http://ww1.microchip.com/downloads/en/devicedoc/21294e.pdf#G1.1011678>`_ and `Pin Description
+<http://ww1.microchip.com/downloads/en/devicedoc/21294e.pdf#G1.1034774>`_ section of the MCP3002
+datasheet.
 """
 from .mcp3xxx import MCP3xxx
 
@@ -42,7 +47,7 @@ class MCP3002(MCP3xxx):
     - (P0, P1) = CH0 - CH1
     - (P1, P0) = CH1 - CH0
 
-    See also the notes in the `AnalogIn <api.html#id3>`_ class.
+    See also the warning in the `AnalogIn`_ class API.
     """
     DIFF_PINS = {
         (0, 1) : P0,

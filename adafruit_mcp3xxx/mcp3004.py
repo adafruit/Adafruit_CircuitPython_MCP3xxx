@@ -26,6 +26,11 @@ MCP3004 4-channel, 10-bit, analog-to-digital
 converter instance.
 
 * Author(s): Brent Rubell
+
+For proper wiring, please refer to `Package Types diagram
+<https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf#page=1>`_ and `Pin Description section
+<https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf#G1.1035093>`_ of the MCP3004/MCP3008
+datasheet.
 """
 
 from .mcp3xxx import MCP3xxx
@@ -46,7 +51,7 @@ class MCP3004(MCP3xxx):
     - (P2, P3) = CH2 - CH3
     - (P3, P2) = CH3 - CH2
 
-    See also the notes in the `AnalogIn <api.html#id3>`_ class.
+    See also the warning in the `AnalogIn`_ class API.
     """
     DIFF_PINS = {
         (0, 1) : P0,
