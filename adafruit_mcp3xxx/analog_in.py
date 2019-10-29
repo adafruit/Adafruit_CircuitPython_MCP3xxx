@@ -53,7 +53,8 @@ class AnalogIn():
         if self.is_differential:
             self._pin_setting = self._mcp.DIFF_PINS.get((positive_pin, negative_pin), None)
             if self._pin_setting is None:
-                raise ValueError("Differential pin mapping not defined. Please read the docs.")
+                raise ValueError("Differential pin mapping not defined. Please read the "
+                                 "documentation for valid differential channel mappings.")
 
     @property
     def value(self):
