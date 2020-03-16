@@ -59,6 +59,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
 from adafruit_bus_device.spi_device import SPIDevice
 
+
 class MCP3xxx:
     """
     This abstract base class is meant to be inherited by `MCP3008`_, `MCP3004`_,
@@ -68,6 +69,7 @@ class MCP3xxx:
     :param ~digitalio.DigitalInOut cs: Chip Select Pin.
     :param float ref_voltage: Voltage into (Vin) the ADC.
     """
+
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         self._spi_device = SPIDevice(spi_bus, cs)
         self._out_buf = bytearray(3)
@@ -93,6 +95,6 @@ class MCP3xxx:
         """
         self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
         with self._spi_device as spi:
-            #pylint: disable=no-member
+            # pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf)
         return ((self._in_buf[1] & 0x03) << 8) | self._in_buf[2]

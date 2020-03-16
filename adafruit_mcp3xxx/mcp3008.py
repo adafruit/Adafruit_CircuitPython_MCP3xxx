@@ -45,6 +45,7 @@ P5 = 5
 P6 = 6
 P7 = 7
 
+
 class MCP3008(MCP3xxx):
     """
     MCP3008 Differential channel mapping. The following list of available differential readings
@@ -61,15 +62,16 @@ class MCP3008(MCP3xxx):
 
     See also the warning in the `AnalogIn`_ class API.
     """
+
     DIFF_PINS = {
-        (0, 1) : P0,
-        (1, 0) : P1,
-        (2, 3) : P2,
-        (3, 2) : P3,
-        (4, 5) : P4,
-        (5, 4) : P5,
-        (6, 7) : P6,
-        (7, 6) : P7
+        (0, 1): P0,
+        (1, 0): P1,
+        (2, 3): P2,
+        (3, 2): P3,
+        (4, 5): P4,
+        (5, 4): P5,
+        (6, 7): P6,
+        (7, 6): P7,
     }
 
     def __init__(self, spi_bus, cs, ref_voltage=3.3):

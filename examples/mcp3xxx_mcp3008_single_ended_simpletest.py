@@ -16,5 +16,5 @@ mcp = MCP.MCP3008(spi, cs)
 # create an analog input channel on pin 0
 chan = AnalogIn(mcp, MCP.P0)
 
-print('Raw ADC Value: ', chan.value)
-print('ADC Voltage: ' + str(chan.voltage) + 'V')
+print("Raw ADC Value: ", chan.value)
+print("ADC Voltage: " + str(chan.voltage) + "V")
