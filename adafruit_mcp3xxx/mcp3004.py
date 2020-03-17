@@ -41,6 +41,7 @@ P1 = 1
 P2 = 2
 P3 = 3
 
+
 class MCP3004(MCP3xxx):
     """
     MCP3004 Differential channel mapping. The following list of available differential readings
@@ -53,12 +54,8 @@ class MCP3004(MCP3xxx):
 
     See also the warning in the `AnalogIn`_ class API.
     """
-    DIFF_PINS = {
-        (0, 1) : P0,
-        (1, 0) : P1,
-        (2, 3) : P2,
-        (3, 2) : P3
-    }
+
+    DIFF_PINS = {(0, 1): P0, (1, 0): P1, (2, 3): P2, (3, 2): P3}
 
     def __init__(self, spi_bus, cs, ref_voltage=3.3):
         super(MCP3004, self).__init__(spi_bus, cs, ref_voltage=ref_voltage)

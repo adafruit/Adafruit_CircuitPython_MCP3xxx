@@ -16,5 +16,5 @@ mcp = MCP.MCP3004(spi, cs)
 # create a differential ADC channel between Pin 0 and Pin 1
 chan = AnalogIn(mcp, MCP.P0, MCP.P1)
 
-print('Differential ADC Value: ', chan.value)
-print('Differential ADC Voltage: ' + str(chan.voltage) + 'V')
+print("Differential ADC Value: ", chan.value)
+print("Differential ADC Voltage: " + str(chan.voltage) + "V")

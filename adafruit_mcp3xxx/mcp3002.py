@@ -39,6 +39,7 @@ from .mcp3xxx import MCP3xxx
 P0 = 0
 P1 = 1
 
+
 class MCP3002(MCP3xxx):
     """
     MCP3002 Differential channel mapping. The following list of available differential readings
@@ -49,14 +50,12 @@ class MCP3002(MCP3xxx):
 
     See also the warning in the `AnalogIn`_ class API.
     """
-    DIFF_PINS = {
-        (0, 1) : P0,
-        (1, 0) : P1
-    }
+
+    DIFF_PINS = {(0, 1): P0, (1, 0): P1}
 
     def read(self, pin, is_differential=False):
         self._out_buf[0] = 0x40 | ((not is_differential) << 5) | (pin << 4)
         with self._spi_device as spi:
-            #pylint: disable=no-member
+            # pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf, out_end=2, in_end=2)
         return ((self._in_buf[0] & 0x03) << 8) | self._in_buf[1]
