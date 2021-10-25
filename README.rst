@@ -167,6 +167,11 @@ MCP3004 Differential
 
 
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/mcp3xxx/en/latest/>`_.
+
 Contributing
 ============
 
