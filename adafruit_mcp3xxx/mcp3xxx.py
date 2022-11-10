@@ -53,7 +53,7 @@ class MCP3xxx:
     :param float ref_voltage: Voltage into (Vin) the ADC.
     """
 
-    def __init__(self, spi_bus, cs, ref_voltage=3.3):
+    def __init__(self, spi_bus, cs, ref_voltage=3.3):  # pylint: disable=invalid-name
         self._spi_device = SPIDevice(spi_bus, cs)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)

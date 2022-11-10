@@ -14,7 +14,7 @@ differential ADC readings.
     The ADC chips supported by this library do not use negative numbers. If the resulting
     differential read is less than 0, then the returned integer value (and voltage value) is ``0``.
     If for some reason the voltage on a channel is greater than the reference voltage or
-    less than 0, then the returned integer value is ``65472‬`` or ``0`` respectively.
+    less than 0, then the returned integer value is ``65472`` or ``0`` respectively.
 
 """
 
