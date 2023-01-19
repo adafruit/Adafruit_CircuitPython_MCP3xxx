@@ -42,6 +42,13 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 
 from adafruit_bus_device.spi_device import SPIDevice
 
+try:
+    import typing  # pylint: disable=unused-import
+    from digitalio import DigitalInOut
+    from busio import SPI
+except ImportError:
+    pass
+
 
 class MCP3xxx:
     """
@@ -53,18 +60,20 @@ class MCP3xxx:
     :param float ref_voltage: Voltage into (Vin) the ADC.
     """
 
-    def __init__(self, spi_bus, cs, ref_voltage=3.3):  # pylint: disable=invalid-name
+    def __init__(
+        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3
+    ):  # pylint: disable=invalid-name
         self._spi_device = SPIDevice(spi_bus, cs)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
 
     @property
-    def reference_voltage(self):
+    def reference_voltage(self) -> float:
         """Returns the MCP3xxx's reference voltage. (read-only)"""
         return self._ref_voltage
 
-    def read(self, pin, is_differential=False):
+    def read(self, pin: int, is_differential: bool = False) -> int:
         """SPI Interface for MCP3xxx-based ADCs reads. Due to 10-bit accuracy, the returned
         value ranges [0, 1023].
 
