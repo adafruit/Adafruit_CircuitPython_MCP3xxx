@@ -36,7 +36,7 @@ class MCP3002(MCP3xxx):
 
     DIFF_PINS = {(0, 1): P0, (1, 0): P1}
 
-    def read(self, pin, is_differential=False):
+    def read(self, pin: int, is_differential: bool = False) -> int:
         self._out_buf[0] = 0x40 | ((not is_differential) << 5) | (pin << 4)
         with self._spi_device as spi:
             # pylint: disable=no-member

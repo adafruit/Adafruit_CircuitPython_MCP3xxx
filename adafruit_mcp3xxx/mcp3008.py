@@ -18,6 +18,13 @@ datasheet.
 
 from .mcp3xxx import MCP3xxx
 
+try:
+    import typing  # pylint: disable=unused-import
+    from digitalio import DigitalInOut
+    from busio import SPI
+except ImportError:
+    pass
+
 # MCP3008 Pin Mapping
 P0 = 0
 P1 = 1
@@ -57,6 +64,8 @@ class MCP3008(MCP3xxx):
         (7, 6): P7,
     }
 
-    def __init__(self, spi_bus, cs, ref_voltage=3.3):
+    def __init__(
+        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3
+    ) -> None:
         super().__init__(spi_bus, cs, ref_voltage=ref_voltage)
         self._out_buf[0] = 0x01
