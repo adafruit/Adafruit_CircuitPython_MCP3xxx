@@ -55,7 +55,10 @@ class AnalogIn:
     @property
     def value(self) -> int:
         """Returns the value of an ADC pin as an integer in the range [0, 65535]."""
-        return int(self._mcp.read(self._pin_setting, is_differential=self.is_differential) * (65535 / 1023))
+        return int(
+            self._mcp.read(self._pin_setting, is_differential=self.is_differential)
+            * (65535 / 1023)
+        )
 
     @property
     def voltage(self) -> float:
