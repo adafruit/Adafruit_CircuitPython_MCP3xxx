@@ -14,7 +14,7 @@ differential ADC readings.
     The ADC chips supported by this library do not use negative numbers. If the resulting
     differential read is less than 0, then the returned integer value (and voltage value) is ``0``.
     If for some reason the voltage on a channel is greater than the reference voltage or
-    less than 0, then the returned integer value is ``65472`` or ``0`` respectively.
+    less than 0, then the returned integer value is ``65535`` or ``0`` respectively.
 
 """
 
@@ -54,15 +54,16 @@ class AnalogIn:
 
     @property
     def value(self) -> int:
-        """Returns the value of an ADC pin as an integer. Due to 10-bit accuracy of the chip, the
-        returned values range [0, 65472]."""
-        return (
-            self._mcp.read(self._pin_setting, is_differential=self.is_differential) << 6
+        """Returns the value of an ADC pin as an integer in the range [0, 65535]."""
+        # Initial result is only 10 bits.
+        result = int(
+            self._mcp.read(self._pin_setting, is_differential=self.is_differential)
         )
+        # Stretch to 16 bits and cover full range.
+        return (result << 6) | (result >> 4)
 
     @property
     def voltage(self) -> float:
         """Returns the voltage from the ADC pin as a floating point value. Due to the 10-bit
-        accuracy of the chip, returned values range from 0 to (``reference_voltage`` *
-        65472 / 65535)"""
-        return (self.value * self._mcp.reference_voltage) / 65535
+        accuracy of the chip, returned values range from 0 to ``reference_voltage``."""
+        return self.value * self._mcp.reference_voltage / 65535
