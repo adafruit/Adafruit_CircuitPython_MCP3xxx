@@ -56,10 +56,11 @@ class AnalogIn:
     def value(self) -> int:
         """Returns the value of an ADC pin as an integer in the range [0, 65535]."""
         # Initial result is only 10 bits.
-        result = int(self._mcp.read(self._pin_setting, is_differential=self.is_differential))
+        result = int(
+            self._mcp.read(self._pin_setting, is_differential=self.is_differential)
+        )
         # Stretch to 16 bits and cover full range.
         return (result << 6) | (result >> 4)
-        )
 
     @property
     def voltage(self) -> float:
