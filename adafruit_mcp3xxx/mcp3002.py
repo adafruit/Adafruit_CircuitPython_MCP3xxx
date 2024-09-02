@@ -9,7 +9,7 @@
 MCP3002 2-channel, 10-bit, analog-to-digital
 converter instance.
 
-* Author(s): Brent Rubell, Brendan Doherty
+* Author(s): Brent Rubell, Brendan Doherty, Kevin J. Walters
 
 For proper wiring, please refer to `Package Type diagram
 <http://ww1.microchip.com/downloads/en/devicedoc/21294e.pdf#G1.1011678>`_ and `Pin Description
@@ -34,9 +34,21 @@ class MCP3002(MCP3xxx):
     See also the warning in the `AnalogIn`_ class API.
     """
 
+    BITS = 10
     DIFF_PINS = {(0, 1): P0, (1, 0): P1}
 
     def read(self, pin: int, is_differential: bool = False) -> int:
+        """SPI Interface for MCP3xxx-based ADCs reads. Due to 10-bit accuracy, the returned
+        value ranges [0, 1023].
+
+        :param int pin: individual or differential pin.
+        :param bool is_differential: single-ended or differential read.
+
+        .. note:: This library offers a helper class called `AnalogIn`_ for both single-ended
+            and differential reads. If you opt to not implement `AnalogIn`_ during differential
+            reads, then the ``pin`` parameter should be the first of the two pins associated with
+            the desired differential channel mapping.
+        """
         self._out_buf[0] = 0x40 | ((not is_differential) << 5) | (pin << 4)
         with self._spi_device as spi:
             # pylint: disable=no-member

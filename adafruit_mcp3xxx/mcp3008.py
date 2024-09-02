@@ -8,7 +8,7 @@
 MCP3008 8-channel, 10-bit, analog-to-digital
 converter instance.
 
-* Author(s): Brent Rubell
+* Author(s): Brent Rubell, Kevin J. Walters
 
 For proper wiring, please refer to the `Package Types diagram
 <https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf#page=1>`_ and `Pin Description section
@@ -17,13 +17,6 @@ datasheet.
 """
 
 from .mcp3xxx import MCP3xxx
-
-try:
-    import typing  # pylint: disable=unused-import
-    from digitalio import DigitalInOut
-    from busio import SPI
-except ImportError:
-    pass
 
 # MCP3008 Pin Mapping
 P0 = 0
@@ -53,6 +46,7 @@ class MCP3008(MCP3xxx):
     See also the warning in the `AnalogIn`_ class API.
     """
 
+    BITS = 10
     DIFF_PINS = {
         (0, 1): P0,
         (1, 0): P1,
@@ -64,8 +58,20 @@ class MCP3008(MCP3xxx):
         (7, 6): P7,
     }
 
-    def __init__(
-        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3
-    ) -> None:
-        super().__init__(spi_bus, cs, ref_voltage=ref_voltage)
-        self._out_buf[0] = 0x01
+    def read(self, pin: int, is_differential: bool = False) -> int:
+        """SPI Interface for MCP3xxx-based ADCs reads. Due to 10-bit accuracy, the returned
+        value ranges [0, 1023].
+
+        :param int pin: individual or differential pin.
+        :param bool is_differential: single-ended or differential read.
+
+        .. note:: This library offers a helper class called `AnalogIn`_ for both single-ended
+            and differential reads. If you opt to not implement `AnalogIn`_ during differential
+            reads, then the ``pin`` parameter should be the first of the two pins associated with
+            the desired differential channel mapping.
+        """
+        self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
+        with self._spi_device as spi:
+            # pylint: disable=no-member
+            spi.write_readinto(self._out_buf, self._in_buf)
+        return ((self._in_buf[1] & 0x03) << 8) | self._in_buf[2]
