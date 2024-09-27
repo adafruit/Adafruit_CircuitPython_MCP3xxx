@@ -12,9 +12,10 @@ converter instance.
 * Author(s): Brent Rubell, Brendan Doherty, Kevin J. Walters
 
 For proper wiring, please refer to `Package Type diagram
-<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21034F.pdf>`_ and `Pin Description
-<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21034F.pdf#G1.1063009>`_ section of the MCP3202
-datasheet.
+<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21034F.pdf>`_
+and `Pin Description
+<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21034F.pdf#G1.1063009>`_
+section of the MCP3202 datasheet.
 """
 from .mcp3xxx import MCP3xxx
 
@@ -53,4 +54,4 @@ class MCP3202(MCP3xxx):
         with self._spi_device as spi:
             # pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf, out_end=2, in_end=2)
-        return ((self._in_buf[0] & 0x0f) << 8) | self._in_buf[1]
+        return ((self._in_buf[0] & 0x0F) << 8) | self._in_buf[1]

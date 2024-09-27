@@ -62,14 +62,18 @@ class MCP3xxx:
     """
 
     def __init__(
-        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3, baudrate: int = 100_000
+        self,
+        spi_bus: SPI,
+        cs: DigitalInOut,
+        ref_voltage: float = 3.3,
+        baudrate: int = 100_000,
     ):  # pylint: disable=invalid-name
         self._spi_device = SPIDevice(spi_bus, cs, baudrate=baudrate)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
 
-        self._out_buf[0] = 0x01   # some sub-classes will overwrite this
+        self._out_buf[0] = 0x01  # some sub-classes will overwrite this
 
     @property
     def reference_voltage(self) -> float:

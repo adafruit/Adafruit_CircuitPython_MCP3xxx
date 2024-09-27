@@ -11,9 +11,10 @@ converter instance.
 * Author(s): Brent Rubell, Kevin J. Walters
 
 For proper wiring, please refer to `Package Types diagram
-<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21298e.pdf>`_ and `Pin Description section
-<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21298e.pdf#G1.1041174>`_ of the MCP3204/MCP3208
-datasheet.
+<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21298e.pdf>`_
+and `Pin Description section
+<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21298e.pdf#G1.1041174>`_
+of the MCP3204/MCP3208 datasheet.
 """
 
 from .mcp3xxx import MCP3xxx
@@ -75,4 +76,4 @@ class MCP3208(MCP3xxx):
         with self._spi_device as spi:
             # pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf)
-        return ((self._in_buf[1] & 0x0f) << 8) | self._in_buf[2]
+        return ((self._in_buf[1] & 0x0F) << 8) | self._in_buf[2]
