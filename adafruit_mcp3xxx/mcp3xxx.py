@@ -58,12 +58,13 @@ class MCP3xxx:
     :param ~adafruit_bus_device.spi_device.SPIDevice spi_bus: SPI bus the ADC is connected to.
     :param ~digitalio.DigitalInOut cs: Chip Select Pin.
     :param float ref_voltage: Voltage into (Vin) the ADC.
+    :param int baudrate: the clock speed for communication to this SPI device. Defaults to 100k.
     """
 
     def __init__(
-        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3
+        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3, baudrate: int = 100_000
     ):  # pylint: disable=invalid-name
-        self._spi_device = SPIDevice(spi_bus, cs)
+        self._spi_device = SPIDevice(spi_bus, cs, baudrate=baudrate)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
