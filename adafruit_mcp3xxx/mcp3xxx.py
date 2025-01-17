@@ -8,7 +8,7 @@
 
 CircuitPython Library for MCP3xxx ADCs with SPI
 
-* Author(s): ladyada, Brent Rubell
+* Author(s): ladyada, Brent Rubell, Kevin J. Walters
 
 Implementation Notes
 --------------------
@@ -58,35 +58,24 @@ class MCP3xxx:
     :param ~adafruit_bus_device.spi_device.SPIDevice spi_bus: SPI bus the ADC is connected to.
     :param ~digitalio.DigitalInOut cs: Chip Select Pin.
     :param float ref_voltage: Voltage into (Vin) the ADC.
+    :param int baudrate: the clock speed for communication to this SPI device. Defaults to 100k.
     """
 
     def __init__(
-        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3
+        self,
+        spi_bus: SPI,
+        cs: DigitalInOut,
+        ref_voltage: float = 3.3,
+        baudrate: int = 100_000,
     ):  # pylint: disable=invalid-name
-        self._spi_device = SPIDevice(spi_bus, cs)
+        self._spi_device = SPIDevice(spi_bus, cs, baudrate=baudrate)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
+
+        self._out_buf[0] = 0x01  # some sub-classes will overwrite this
 
     @property
     def reference_voltage(self) -> float:
         """Returns the MCP3xxx's reference voltage. (read-only)"""
         return self._ref_voltage
-
-    def read(self, pin: int, is_differential: bool = False) -> int:
-        """SPI Interface for MCP3xxx-based ADCs reads. Due to 10-bit accuracy, the returned
-        value ranges [0, 1023].
-
-        :param int pin: individual or differential pin.
-        :param bool is_differential: single-ended or differential read.
-
-        .. note:: This library offers a helper class called `AnalogIn`_ for both single-ended
-            and differential reads. If you opt to not implement `AnalogIn`_ during differential
-            reads, then the ``pin`` parameter should be the first of the two pins associated with
-            the desired differential channel mapping.
-        """
-        self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
-        with self._spi_device as spi:
-            # pylint: disable=no-member
-            spi.write_readinto(self._out_buf, self._in_buf)
-        return ((self._in_buf[1] & 0x03) << 8) | self._in_buf[2]
