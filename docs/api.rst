@@ -1,5 +1,5 @@
-API
-------------
+API Reference
+#############
 
 .. automodule:: adafruit_mcp3xxx.mcp3xxx
     :members:
