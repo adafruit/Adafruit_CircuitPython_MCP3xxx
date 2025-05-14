@@ -43,9 +43,10 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP3xxx.git"
 from adafruit_bus_device.spi_device import SPIDevice
 
 try:
-    import typing  # pylint: disable=unused-import
-    from digitalio import DigitalInOut
+    import typing
+
     from busio import SPI
+    from digitalio import DigitalInOut
 except ImportError:
     pass
 
@@ -60,9 +61,7 @@ class MCP3xxx:
     :param float ref_voltage: Voltage into (Vin) the ADC.
     """
 
-    def __init__(
-        self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3
-    ):  # pylint: disable=invalid-name
+    def __init__(self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3):
         self._spi_device = SPIDevice(spi_bus, cs)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
@@ -87,6 +86,5 @@ class MCP3xxx:
         """
         self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
         with self._spi_device as spi:
-            # pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf)
         return ((self._in_buf[1] & 0x03) << 8) | self._in_buf[2]
