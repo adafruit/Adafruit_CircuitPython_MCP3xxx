@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
+import board
 import busio
 import digitalio
-import board
+
 import adafruit_mcp3xxx.mcp3002 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 

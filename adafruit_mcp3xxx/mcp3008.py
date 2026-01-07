@@ -18,6 +18,14 @@ datasheet.
 
 from .mcp3xxx import MCP3xxx
 
+try:
+    import typing
+
+    from busio import SPI
+    from digitalio import DigitalInOut
+except ImportError:
+    pass
+
 # MCP3008 Pin Mapping
 P0 = 0
 P1 = 1

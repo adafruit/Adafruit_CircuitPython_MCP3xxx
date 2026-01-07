@@ -16,6 +16,7 @@ For proper wiring, please refer to `Package Type diagram
 <http://ww1.microchip.com/downloads/en/devicedoc/21294e.pdf#G1.1034774>`_ section of the MCP3002
 datasheet.
 """
+
 from .mcp3xxx import MCP3xxx
 
 # MCP3002 Pin Mapping
@@ -51,6 +52,5 @@ class MCP3002(MCP3xxx):
         """
         self._out_buf[0] = 0x40 | ((not is_differential) << 5) | (pin << 4)
         with self._spi_device as spi:
-            # pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf, out_end=2, in_end=2)
         return ((self._in_buf[0] & 0x03) << 8) | self._in_buf[1]

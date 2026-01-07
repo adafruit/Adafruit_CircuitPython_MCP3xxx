@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 #
 # SPDX-License-Identifier: MIT
 
+import datetime
 import os
 import sys
-import datetime
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -52,9 +50,7 @@ project = "Adafruit MCP3xxx Library"
 creation_year = "2018"
 current_year = str(datetime.datetime.now().year)
 year_duration = (
-    current_year
-    if current_year == creation_year
-    else creation_year + " - " + current_year
+    current_year if current_year == creation_year else creation_year + " - " + current_year
 )
 copyright = year_duration + " ladyada"
 author = "ladyada"
@@ -108,12 +104,14 @@ napoleon_numpy_docstring = False
 import sphinx_rtd_theme
 
 html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path(), "."]
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+# Include extra css to work around rtd theme glitches
+html_css_files = ["custom.css"]
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32

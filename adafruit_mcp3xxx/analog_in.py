@@ -34,18 +34,14 @@ class AnalogIn:
     :param int negative_pin: Optional pin for differential reads.
     """
 
-    def __init__(
-        self, mcp: MCP3xxx, positive_pin: int, negative_pin: Optional[int] = None
-    ) -> None:
+    def __init__(self, mcp: MCP3xxx, positive_pin: int, negative_pin: Optional[int] = None) -> None:
         if not isinstance(mcp, MCP3xxx):
             raise ValueError("mcp object is not a sibling of MCP3xxx class.")
         self._mcp = mcp
         self._pin_setting = positive_pin
         self.is_differential = negative_pin is not None
         if self.is_differential:
-            self._pin_setting = self._mcp.DIFF_PINS.get(
-                (positive_pin, negative_pin), None
-            )
+            self._pin_setting = self._mcp.DIFF_PINS.get((positive_pin, negative_pin), None)
             if self._pin_setting is None:
                 raise ValueError(
                     "Differential pin mapping not defined. Please read the "
@@ -58,9 +54,7 @@ class AnalogIn:
     def value(self) -> int:
         """Returns the value of an ADC pin as an integer in the range [0, 65535]."""
         # Initial result is only 10 or 12 bits.
-        result = int(
-            self._mcp.read(self._pin_setting, is_differential=self.is_differential)
-        )
+        result = int(self._mcp.read(self._pin_setting, is_differential=self.is_differential))
         # Stretch to 16 bits and cover full range.
         return (result << self._read_shift_left) | (result >> self._read_shift_right)
 
