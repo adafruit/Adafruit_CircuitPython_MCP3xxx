@@ -3,22 +3,23 @@
 # SPDX-License-Identifier: MIT
 
 """
-:py:class:`~adafruit_mcp3xxx.mcp3008.MCP3008`
+:py:class:`~adafruit_mcp3xxx.mcp3208.MCP3208`
 =============================================================
-MCP3008 8-channel, 10-bit, analog-to-digital
+MCP3208 8-channel, 12-bit, analog-to-digital
 converter instance.
 
 * Author(s): Brent Rubell, Kevin J. Walters
 
-For proper wiring, please refer to the `Package Types diagram
-<https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf#page=1>`_ and `Pin Description section
-<https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf#G1.1035093>`_ of the MCP3004/MCP3008
-datasheet.
+For proper wiring, please refer to `Package Types diagram
+<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21298e.pdf>`_
+and `Pin Description section
+<https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21298e.pdf#G1.1041174>`_
+of the MCP3204/MCP3208 datasheet.
 """
 
 from .mcp3xxx import MCP3xxx
 
-# MCP3008 Pin Mapping
+# MCP3208 Pin Mapping
 P0 = 0
 P1 = 1
 P2 = 2
@@ -29,9 +30,9 @@ P6 = 6
 P7 = 7
 
 
-class MCP3008(MCP3xxx):
+class MCP3208(MCP3xxx):
     """
-    MCP3008 Differential channel mapping. The following list of available differential readings
+    MCP3208 Differential channel mapping. The following list of available differential readings
     takes the form ``(positive_pin, negative_pin) = (channel A) - (channel B)``.
 
     - (P0, P1) = CH0 - CH1
@@ -46,7 +47,7 @@ class MCP3008(MCP3xxx):
     See also the warning in the `AnalogIn`_ class API.
     """
 
-    BITS = 10
+    BITS = 12
     DIFF_PINS = {
         (0, 1): P0,
         (1, 0): P1,
@@ -70,8 +71,9 @@ class MCP3008(MCP3xxx):
             reads, then the ``pin`` parameter should be the first of the two pins associated with
             the desired differential channel mapping.
         """
-        self._out_buf[1] = ((not is_differential) << 7) | (pin << 4)
+        self._out_buf[0] = 0x04 | ((not is_differential) << 1) | (pin >> 2)
+        self._out_buf[1] = (pin & 0x03) << 6
         with self._spi_device as spi:
             # pylint: disable=no-member
             spi.write_readinto(self._out_buf, self._in_buf)
-        return ((self._in_buf[1] & 0x03) << 8) | self._in_buf[2]
+        return ((self._in_buf[1] & 0x0F) << 8) | self._in_buf[2]

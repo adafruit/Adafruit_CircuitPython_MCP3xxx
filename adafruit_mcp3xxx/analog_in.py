@@ -8,7 +8,7 @@
 AnalogIn for single-ended and
 differential ADC readings.
 
-* Author(s): Brent Rubell
+* Author(s): Brent Rubell, Kevin J. Walters
 
 .. warning::
     The ADC chips supported by this library do not use negative numbers. If the resulting
@@ -47,17 +47,19 @@ class AnalogIn:
                     "Differential pin mapping not defined. Please read the "
                     "documentation for valid differential channel mappings."
                 )
+        self._read_shift_left = 16 - self._mcp.BITS
+        self._read_shift_right = self._mcp.BITS - self._read_shift_left
 
     @property
     def value(self) -> int:
         """Returns the value of an ADC pin as an integer in the range [0, 65535]."""
-        # Initial result is only 10 bits.
+        # Initial result is only 10 or 12 bits.
         result = int(self._mcp.read(self._pin_setting, is_differential=self.is_differential))
         # Stretch to 16 bits and cover full range.
-        return (result << 6) | (result >> 4)
+        return (result << self._read_shift_left) | (result >> self._read_shift_right)
 
     @property
     def voltage(self) -> float:
-        """Returns the voltage from the ADC pin as a floating point value. Due to the 10-bit
-        accuracy of the chip, returned values range from 0 to ``reference_voltage``."""
+        """Returns the voltage from the ADC pin as a floating point value.
+        Returned value ranges from 0 to ``reference_voltage``."""
         return self.value * self._mcp.reference_voltage / 65535

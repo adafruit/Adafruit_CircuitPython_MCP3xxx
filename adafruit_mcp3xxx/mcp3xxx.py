@@ -8,7 +8,7 @@
 
 CircuitPython Library for MCP3xxx ADCs with SPI
 
-* Author(s): ladyada, Brent Rubell
+* Author(s): ladyada, Brent Rubell, Kevin J. Walters
 
 Implementation Notes
 --------------------
@@ -59,13 +59,22 @@ class MCP3xxx:
     :param ~adafruit_bus_device.spi_device.SPIDevice spi_bus: SPI bus the ADC is connected to.
     :param ~digitalio.DigitalInOut cs: Chip Select Pin.
     :param float ref_voltage: Voltage into (Vin) the ADC.
+    :param int baudrate: the clock speed for communication to this SPI device. Defaults to 100k.
     """
 
-    def __init__(self, spi_bus: SPI, cs: DigitalInOut, ref_voltage: float = 3.3):
-        self._spi_device = SPIDevice(spi_bus, cs)
+    def __init__(
+        self,
+        spi_bus: SPI,
+        cs: DigitalInOut,
+        ref_voltage: float = 3.3,
+        baudrate: int = 100_000,
+    ):
+        self._spi_device = SPIDevice(spi_bus, cs, baudrate=baudrate)
         self._out_buf = bytearray(3)
         self._in_buf = bytearray(3)
         self._ref_voltage = ref_voltage
+
+        self._out_buf[0] = 0x01  # some sub-classes will overwrite this
 
     @property
     def reference_voltage(self) -> float:
