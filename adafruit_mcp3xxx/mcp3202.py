@@ -17,6 +17,7 @@ and `Pin Description
 <https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21034F.pdf#G1.1063009>`_
 section of the MCP3202 datasheet.
 """
+
 from .mcp3xxx import MCP3xxx
 
 # MCP3202 Pin Mapping
